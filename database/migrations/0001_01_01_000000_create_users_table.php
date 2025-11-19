@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('no_ic');
             $table->string('name');
             $table->string('user_name');
+            $table->string('jantina');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('level')->default('user');

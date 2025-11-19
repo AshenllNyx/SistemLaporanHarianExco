@@ -24,9 +24,10 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'no_ic' => fake()->unique()->numerify('###########'),
+            'no_ic' => fake()->unique()->numerify('############'),
             'name' => fake()->name(),
             'user_name' => fake()->unique()->userName(),
+            'jantina' => fake()->randomElement(['Lelaki', 'Perempuan']),
             'email' => fake()->unique()->safeEmail(),
             'level' => random_int(1, 10) > 8 ? 'admin' : 'user',
             'email_verified_at' => now(),

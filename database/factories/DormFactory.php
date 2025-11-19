@@ -16,15 +16,33 @@ class DormFactory extends Factory
      */
     public function definition(): array
     {
-        $students = array_map(function () {
-            return [
+        // choose dorm name first so we can assign specific capacities
+        $dormNames = ['Dorm A', 'Dorm B', 'Dorm C', 'Dorm D'];
+        $nama = fake()->randomElement($dormNames);
+
+        // set capacity per dorm (specific for Dorm A/B, default for others)
+        $capacityMap = [
+            'Dorm A' => 8,
+            'Dorm B' => 12,
+            'Dorm C' => 10,
+            'Dorm D' => 6,
+        ];
+        $capacity = $capacityMap[$nama] ?? 8;
+
+        // generate between 1 and capacity students
+        $count = random_int(1, $capacity);
+        $students = [];
+        for ($i = 0; $i < $count; $i++) {
+            $students[] = [
                 'no_ic' => fake()->unique()->numerify('###########'),
                 'nama' => fake()->name(),
+                'jantina' => fake()->randomElement(['Lelaki', 'Perempuan']),
             ];
-        }, range(1, random_int(5, 20)));
+        }
 
         return [
-            'nama_dorm' => fake()->company(),
+            'nama_dorm' => $nama,
+            'capacity' => $capacity,
             'senarai_pelajar' => json_encode($students),
         ];
     }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 
 class LoginController extends Controller
@@ -36,6 +38,42 @@ class LoginController extends Controller
 		return back()->withErrors([
 			'user_name' => 'The provided credentials do not match our records.',
 		])->withInput($request->only('user_name', 'remember'));
+	}
+
+	/**
+	 * Show the registration form.
+	 */
+	public function showRegisterForm()
+	{
+		return view('register');
+	}
+
+	/**
+	 * Handle a registration request.
+	 */
+	public function register(Request $request)
+	{
+		$validated = $request->validate([
+			'no_ic' => ['required', 'digits:12', 'unique:users,no_ic'],
+			'name' => ['required', 'string', 'max:255'],
+			'user_name' => ['required', 'string', 'max:255', 'unique:users,user_name'],
+			'jantina' => ['required', 'string', 'max:255'],
+			'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+			'password' => ['required', 'string', 'min:8', 'confirmed'],
+		]);
+
+		$user = User::create([
+			'no_ic' => $validated['no_ic'],
+			'name' => $validated['name'],
+			'user_name' => $validated['user_name'],
+			'jantina' => $validated['jantina'],
+			'email' => $validated['email'],
+			'password' => Hash::make($validated['password']),
+		]);
+
+		Auth::login($user);
+		$request->session()->regenerate();
+		return redirect()->intended('/');
 	}
 
 	/**

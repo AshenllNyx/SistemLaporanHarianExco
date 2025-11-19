@@ -13,9 +13,11 @@ class Dorm extends Model
     protected $fillable = [
         'nama_dorm',
         'senarai_pelajar',
+        'capacity',
     ];
 
     protected $casts = [
         'senarai_pelajar' => 'array',
+        'capacity' => 'integer',
     ];
 }

@@ -13,6 +13,16 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
+     * Primary key column name
+     */
+    protected $primaryKey = 'no_ic';
+
+    /**
+     * The "type" of the primary key ID.
+     */
+    protected $keyType = 'int';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -21,6 +31,7 @@ class User extends Authenticatable
         'no_ic',
         'name',
         'user_name',
+        'jantina',
         'email',
         'level',
         'password',
