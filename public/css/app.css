@@ -1,0 +1,129 @@
+:root {
+    --card-bg:#ffffff;
+    --muted:#6b7280;
+    --accent:#2563eb;
+    --bg:#eef2ff;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter, sans-serif}
+body{background:var(--bg);display:flex;color:#0f172a}
+
+/* SIDEBAR */
+.sidebar {
+    width:240px;
+    background:#ffffff;
+    border-right:1px solid rgba(15,23,42,0.08);
+    height:100vh;
+    padding:22px 16px;
+    display:flex;
+    flex-direction:column;
+    box-shadow:0 10px 30px rgba(2,6,23,0.06);
+}
+
+.brand-side {
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin-bottom:26px;
+}
+
+.logo {
+    width:46px;height:46px;border-radius:10px;
+    background:linear-gradient(135deg,var(--accent),#4f46e5);
+    display:flex;align-items:center;justify-content:center;
+    color:white;font-weight:700;font-size:17px;
+}
+
+.sidebar nav a {
+    display:block;
+    padding:10px 12px;
+    border-radius:10px;
+    margin-bottom:10px;
+    font-weight:600;
+    font-size:14px;
+    color:#1e293b;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+.sidebar nav a:hover {
+    background:linear-gradient(90deg,var(--accent),#4f46e5);
+    color:white;
+}
+
+/* USER BOX */
+.user-box {
+    margin-top:auto;
+    text-align:center;
+    padding-top:20px;
+    border-top:1px solid rgba(15,23,42,0.06);
+}
+.avatar {
+    width:56px;height:56px;background:#cbd5e1;
+    border-radius:50%;margin:0 auto 8px;
+}
+
+/* MAIN CONTENT */
+.main {
+    flex:1;
+}
+
+header {
+    background:#ffffff;
+    padding:16px 28px;
+    border-bottom:1px solid rgba(15,23,42,0.08);
+    box-shadow:0 4px 18px rgba(2,6,23,0.05);
+    font-weight:700;
+}
+
+.container {
+    padding:26px;
+}
+
+/* CARD STYLE (Untuk content dalam page) */
+.card {
+    background:#ffffff;border-radius:14px;padding:22px;
+    box-shadow:0 10px 26px rgba(2,6,23,0.08);
+    border:1px solid rgba(15,23,42,0.04);
+    margin-bottom:20px;
+}
+
+.card button {
+    background:linear-gradient(90deg,var(--accent),#4f46e5);
+    color:white;padding:8px 16px;border-radius:10px;
+    border:none;font-weight:600;font-size:13px;
+    cursor:pointer;margin-right:10px;
+}
+
+/* RESPONSIVE */
+@media (max-width:920px){
+    .sidebar{position:fixed;z-index:10}
+    .main{margin-left:240px}
+}
+
+.logout-btn {
+    width:100%;
+    padding:10px 14px;
+    border-radius:10px;
+    background:linear-gradient(90deg,var(--accent),#4f46e5);
+    color:white;
+    border:none;
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.logout-btn:hover {
+    opacity:0.9;
+}
+
+.logout-btn:active {
+    transform:translateY(1px);
+}
+
+.user-box p {
+    font-size:14px;
+    font-weight:600;
+    margin-bottom:6px;
+}
