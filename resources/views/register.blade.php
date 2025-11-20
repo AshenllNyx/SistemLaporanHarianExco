@@ -33,14 +33,45 @@
 		@media (max-width:900px){
 			.wrap{width:100%;max-width:420px;display:flex;flex-direction:column;gap:0;align-items:center;justify-content:center}
 			.promo{display:none}
-			.card{width:100%}
+			.card{width:100%}	
 		}
+		select {
+	width:100%;
+	padding:12px 14px;
+	border-radius:10px;
+	border:1px solid #e6e9ef;
+	background:#fbfdff;
+	font-size:14px;
+	color:#0f172a;
+	cursor:pointer;
+	appearance:none;         /* remove default browser arrow */
+	-webkit-appearance:none; /* Safari */
+	-moz-appearance:none;    /* Firefox */
+	background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+	background-repeat:no-repeat;
+	background-position:right 12px center;
+	background-size:16px;
+}
+
+select:focus {
+	outline:none;
+	box-shadow:0 6px 18px rgba(37,99,235,0.12);
+	border-color:var(--accent);
+}
+/* Styling untuk placeholder */
+input::placeholder,
+select::placeholder {
+	color: #9ca3af;   /* warna kelabu lembut */
+	font-size: 13px;
+	opacity: 1;       /* pastikan warna tidak terlalu pudar */
+}
+
 	</style>
 </head>
 <body>
 	<div class="wrap">
 		<div class="promo">
-			<h2>Selamat Datang ke Exco</h2>
+			<h2>Anda adalah user baru?</h2>
 			<p>Buat akaun untuk mula menghantar dan mengurus laporan harian.</p>
 		</div>
 
@@ -61,7 +92,7 @@
 				@csrf
 
 				<div class="field">
-					<label for="no_ic">No. IC</label>
+					<label for="no_ic">No. IC (Tanpa "-")</label>
 					<input id="no_ic" type="text" name="no_ic" value="{{ old('no_ic') }}" required />
 					@error('no_ic') <div class="error">{{ $message }}</div> @enderror
 				</div>
@@ -86,7 +117,7 @@
 						<option value="Lelaki" >Lelaki</option>
 						<option value="Perempuan" >Perempuan</option>
 					</select>	
-					@error('user_name') <div class="error">{{ $message }}</div> @enderror
+					@error('jantina') <div class="error">{{ $message }}</div> @enderror
 				</div>
 
 				<div class="field">
@@ -97,7 +128,7 @@
 
 				<div class="field">
 					<label for="password">Password</label>
-					<input id="password" type="password" name="password" required />
+					<input id="password" type="password" name="password" required required placeholder="Sekurang-kurangnya 8 aksara" />
 					@error('password') <div class="error">{{ $message }}</div> @enderror
 				</div>
 

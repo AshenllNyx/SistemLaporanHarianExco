@@ -43,7 +43,7 @@
 				<div class="logo">Ex</div>
 				<div>
 					<h1 id="login-title">Sign in to your account</h1>
-					<div class="desc">Enter your email and password to continue.</div>
+					<div class="desc">Enter your username and password to continue.</div>
 				</div>
 			</div>
 
