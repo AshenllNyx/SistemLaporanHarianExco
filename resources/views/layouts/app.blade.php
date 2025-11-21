@@ -19,7 +19,7 @@
         <a href="">📄 Senarai Laporan</a>
 
         @if ( Auth::user()->level == 'admin' )
-            <a href="">📄 Senarai User</a>
+            <a href="{{ route('users.index') }}">📄 Senarai User</a>
             <a href="">📄 Senarai Dorm</a>
         @else
             <a href="">📝 Borang Laporan Harian</a> 

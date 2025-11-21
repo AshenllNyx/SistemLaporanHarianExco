@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\UserController;
 
 // Authentication routes: simple login form and actions
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -15,3 +16,5 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/homepage', function () {
     return view('homepage');
 })->name('homepage');
+
+Route::get('/users', [UserController::class, 'index'])->name('users.index');
