@@ -20,4 +20,23 @@ class Dorm extends Model
         'senarai_pelajar' => 'array',
         'capacity' => 'integer',
     ];
+
+    public function getSenaraiPelajarAttribute($value)
+    {
+        // if already array (cast may handle), return it
+        if (is_array($value)) {
+            return $value;
+        }
+
+        // try decoding once
+        $decoded = json_decode($value, true);
+
+        // if decoding gives a string, decode again (double encoded)
+        if (is_string($decoded)) {
+            $decoded2 = json_decode($decoded, true);
+            return is_array($decoded2) ? $decoded2 : [];
+        }
+
+        return is_array($decoded) ? $decoded : [];
+    }
 }

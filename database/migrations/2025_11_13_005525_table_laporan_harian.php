@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('no_ic'); 
             $table->string('nama_exco');
             $table->date('tarikh_laporan');
-            $table->date('tarikh_hantar');
+            $table->date('tarikh_hantar')->nullable();
             $table->text('sebab_hantar_semula')->nullable();
             $table->string('status_laporan')->default('draf');
             $table->timestamps();
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->foreignId('id_laporan');
             $table->foreignId('id_dorm');
             $table->string('jenis_butiran');
-            $table->text('deskripsi_isu');
+            $table->text('deskripsi_isu')->nullable();
             $table->json('data_tambahan')->nullable();
             $table->timestamps();
         });
