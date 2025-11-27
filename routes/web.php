@@ -47,8 +47,10 @@ Route::middleware('auth')->group(function () {
     | Step 1  : Borang laporan dorm
     | Step 2  : Soalan buat laporan disiplin Yes/No
     | Step 3  : Borang laporan disiplin
-    | Step 4  : Review laporan
-    | Step 5  : Submit laporan
+    | Step 4  : Soalan buat laporan kerosakan Yes/No
+    | Step 5  : Borang laporan kerosakan
+    | Step 6  : Review laporan
+    | Step 7  : Submit laporan
     |
     */
 
@@ -59,6 +61,10 @@ Route::middleware('auth')->group(function () {
     // ➤ STEP 1 — Simpan laporan dorm (draf)
     Route::post('/laporan/store-dorm', [LaporanController::class, 'storeDorm'])
         ->name('laporan.storeDorm');
+
+    // ========================================
+    // DISIPLIN
+    // ========================================
 
     // ➤ STEP 2 — Soalan Disiplin? (YA / TIDAK)
     Route::get('/laporan/disiplin/{id}', [LaporanController::class, 'soalanDisiplin'])
@@ -72,11 +78,47 @@ Route::middleware('auth')->group(function () {
     Route::post('/laporan/disiplin/store', [LaporanController::class, 'storeDisiplin'])
         ->name('laporan.disiplin.store');
 
-    // ➤ STEP 4 — Review semua laporan
+    // ========================================
+    // KEROSAKAN
+    // ========================================
+
+    // ➤ STEP 4 — Soalan Kerosakan? (YA / TIDAK)
+    Route::get('/laporan/kerosakan/{id}', [LaporanController::class, 'soalanKerosakan'])
+        ->name('laporan.kerosakan.soalan');
+
+    // ➤ STEP 5 — Borang Laporan Kerosakan (jika YA)
+    Route::get('/laporan/kerosakan/create/{id}', [LaporanController::class, 'createKerosakan'])
+        ->name('laporan.kerosakan.create');
+
+    // ➤ STEP 5 — Simpan laporan kerosakan
+    Route::post('/laporan/kerosakan/store', [LaporanController::class, 'storeKerosakan'])
+        ->name('laporan.kerosakan.store');
+
+    // ========================================
+    // REVIEW & SUBMIT
+    // ========================================
+
+    // ➤ STEP 6 — Review semua laporan
     Route::get('/laporan/review/{id}', [LaporanController::class, 'review'])
         ->name('laporan.review');
 
-    // ➤ STEP 5 — Submit laporan
+    // ➤ STEP 7 — Submit laporan
     Route::post('/laporan/{laporan}/submit', [LaporanController::class, 'submit'])
         ->name('laporan.submit');
+
+    // ========================================
+    // PELAJAR SAKIT
+    // ========================================
+
+    // ➤ STEP 6 — Soalan Pelajar Sakit? (YA / TIDAK)
+    Route::get('/laporan/pelajar-sakit/{id}', [LaporanController::class, 'soalanPelajarSakit'])
+        ->name('laporan.pelajarsakit.soalan');
+
+    // ➤ STEP 7 — Borang Laporan Pelajar Sakit (jika YA)
+    Route::get('/laporan/pelajar-sakit/create/{id}', [LaporanController::class, 'createPelajarSakit'])
+        ->name('laporan.pelajarsakit.create');
+
+    // ➤ STEP 7 — Simpan laporan pelajar sakit
+    Route::post('/laporan/pelajar-sakit/store', [LaporanController::class, 'storePelajarSakit'])
+        ->name('laporan.pelajarsakit.store');
 });

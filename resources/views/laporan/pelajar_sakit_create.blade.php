@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title','Borang Laporan Disiplin')
+@section('title','Borang Laporan Pelajar Sakit')
 
 @section('content')
-<h2 style="font-size:22px;font-weight:700">Borang Laporan Disiplin</h2>
+<h2 style="font-size:22px;font-weight:700">Borang Laporan Pelajar Sakit</h2>
 
 <div style="background:white;padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.06)">
-    <form method="POST" action="{{ route('laporan.disiplin.store') }}">
+    <form method="POST" action="{{ route('laporan.pelajarsakit.store') }}">
         @csrf
 
         <input type="hidden" name="id_laporan" value="{{ $laporan->id_laporan }}">
@@ -32,22 +32,22 @@
         </div>
 
         <div style="margin-bottom:12px">
-            <label style="font-weight:600;display:block">Jenis Kesalahan</label>
-            <input type="text" name="jenis_kesalahan" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #d1d5db" placeholder="Contoh: Kerosakan harta, Merokok, Ponteng" />
+            <label style="font-weight:600;display:block">Jenis Sakit / Simptom</label>
+            <input type="text" name="jenis_sakit" required style="width:100%;padding:10px;border-radius:8px;border:1px solid #d1d5db" placeholder="Contoh: Demam, Sakit perut, Selesema" />
         </div>
 
         <div style="margin-bottom:12px">
-            <label style="font-weight:600;display:block">Tindakan</label>
-            <input type="text" name="tindakan" style="width:100%;padding:10px;border-radius:8px;border:1px solid #d1d5db" placeholder="Contoh: Surat amaran, Lapor warden" />
+            <label style="font-weight:600;display:block">Tindakan Diambil</label>
+            <input type="text" name="tindakan" style="width:100%;padding:10px;border-radius:8px;border:1px solid #d1d5db" placeholder="Contoh: Dibawa ke klinik, Rehat di bilik, Hubungi ibu bapa" />
         </div>
 
         <div style="margin-bottom:12px">
             <label style="font-weight:600;display:block">Catatan</label>
-            <textarea name="catatan" rows="4" style="width:100%;padding:10px;border-radius:8px;border:1px solid #d1d5db"></textarea>
+            <textarea name="catatan" rows="4" style="width:100%;padding:10px;border-radius:8px;border:1px solid #d1d5db" placeholder="Maklumat tambahan (jika ada)"></textarea>
         </div>
 
         <div style="display:flex;justify-content:flex-end;gap:8px">
-            <a href="{{ route('laporan.review', $laporan->id_laporan) }}" style="padding:10px 14px;border-radius:8px;background:#e5e7eb;color:#111;text-decoration:none">Lewat</a>
+            <a href="{{ route('laporan.dewanmakan.soalan', $laporan->id_laporan) }}" style="padding:10px 14px;border-radius:8px;background:#e5e7eb;color:#111;text-decoration:none">Lewat</a>
             <button type="submit" style="padding:10px 14px;border-radius:8px;background:#2563eb;color:white;border:none">Simpan & Semak</button>
         </div>
     </form>
@@ -58,7 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const container = document.getElementById('students-container');
     const addBtn = document.getElementById('add-student-btn');
     
-    // Student options HTML (untuk reuse)
     const studentOptions = `
         <option value="">-- Pilih Pelajar --</option>
         @foreach($students as $ic => $p)
@@ -82,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         container.appendChild(newSelect);
         
-        // Add remove functionality to the new button
         newSelect.querySelector('.remove-student-btn').addEventListener('click', function() {
             newSelect.remove();
         });

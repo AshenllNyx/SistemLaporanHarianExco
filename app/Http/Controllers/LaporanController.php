@@ -57,6 +57,10 @@ class LaporanController extends Controller
                          ->with('success','Draf laporan disimpan. Seterusnya pilih laporan disiplin.');
     }
 
+    // ========================================
+    // DISIPLIN
+    // ========================================
+
     // Step2: soalan yes/no untuk laporan disiplin
     public function soalanDisiplin($id)
     {
@@ -113,9 +117,139 @@ class LaporanController extends Controller
             'data_tambahan' => $data_tambahan,
         ]);
 
-        return redirect()->route('laporan.review', ['laporan' => $id_laporan])
+        // ❌ LAMA: redirect ke review
+        // return redirect()->route('laporan.review', ['laporan' => $id_laporan])
+
+        // ✅ BARU: redirect ke soalan kerosakan
+        return redirect()->route('laporan.kerosakan.soalan', $id_laporan)
                          ->with('success', 'Laporan disiplin disimpan.');
     }
+
+    // ========================================
+    // KEROSAKAN
+    // ========================================
+
+    // Soalan Kerosakan? (YA / TIDAK)
+    public function soalanKerosakan($id)
+    {
+        $laporan = LaporanHarian::findOrFail($id);
+        return view('laporan.soalan_kerosakan', compact('laporan'));
+    }
+
+    // Show create form for laporan kerosakan
+    public function createKerosakan($id)
+    {
+        $laporan = LaporanHarian::with('butiranLaporans')->findOrFail($id);
+
+        // Get all dorms from this laporan for selection
+        $dorms = [];
+        foreach ($laporan->butiranLaporans as $b) {
+            if ($b->dorm) {
+                $dorms[$b->dorm->id_dorm] = $b->dorm->nama_dorm;
+            }
+        }
+
+        return view('laporan.kerosakan_create', compact('laporan', 'dorms'));
+    }
+
+    // Store kerosakan
+    public function storeKerosakan(Request $request)
+    {
+        $request->validate([
+            'id_laporan' => 'required|exists:laporans,id_laporan',
+            'id_dorm' => 'required|exists:dorms,id_dorm',
+            'jenis_kerosakan' => 'required|string|max:255',
+            'lokasi' => 'nullable|string',
+            'catatan' => 'nullable|string',
+        ]);
+
+        $id_laporan = $request->input('id_laporan');
+
+        $data_tambahan = [
+            'jenis_kerosakan' => $request->input('jenis_kerosakan'),
+            'lokasi' => $request->input('lokasi'),
+            'catatan' => $request->input('catatan'),
+        ];
+
+        ButiranLaporan::create([
+            'id_laporan' => $id_laporan,
+            'id_dorm' => $request->input('id_dorm'),
+            'jenis_butiran' => 'kerosakan',
+            'deskripsi_isu' => $request->input('jenis_kerosakan'),
+            'data_tambahan' => $data_tambahan,
+        ]);
+        
+        // ✅ BARU: redirect ke soalan pelajar sakit
+        return redirect()->route('laporan.pelajarsakit.soalan', $id_laporan)
+                         ->with('success', 'Laporan kerosakan disimpan.');
+    }
+
+    // ========================================
+    // PELAJAR SAKIT
+    // ========================================
+
+    // Soalan Pelajar Sakit? (YA / TIDAK)
+    public function soalanPelajarSakit($id)
+    {
+        $laporan = LaporanHarian::findOrFail($id);
+        return view('laporan.soalan_pelajar_sakit', compact('laporan'));
+    }
+
+    // Show create form for laporan pelajar sakit
+    public function createPelajarSakit($id)
+    {
+        $laporan = LaporanHarian::with('butiranLaporans')->findOrFail($id);
+
+        // Get all students from dorms
+        $students = [];
+        foreach ($laporan->butiranLaporans as $b) {
+            $dorm = $b->dorm;
+            if ($dorm && is_array($dorm->senarai_pelajar)) {
+                foreach ($dorm->senarai_pelajar as $p) {
+                    $students[$p['no_ic']] = $p;
+                }
+            }
+        }
+
+        return view('laporan.pelajar_sakit_create', compact('laporan', 'students'));
+    }
+
+    // Store pelajar sakit
+    public function storePelajarSakit(Request $request)
+    {
+        $request->validate([
+            'id_laporan' => 'required|exists:laporans,id_laporan',
+            'pelajar' => 'required|array',
+            'jenis_sakit' => 'required|string|max:255',
+            'tindakan' => 'nullable|string',
+            'catatan' => 'nullable|string',
+        ]);
+
+        $id_laporan = $request->input('id_laporan');
+
+        $data_tambahan = [
+            'pelajar' => $request->input('pelajar'),
+            'jenis_sakit' => $request->input('jenis_sakit'),
+            'tindakan' => $request->input('tindakan'),
+            'catatan' => $request->input('catatan'),
+        ];
+
+        ButiranLaporan::create([
+            'id_laporan' => $id_laporan,
+            'id_dorm' => null,
+            'jenis_butiran' => 'pelajar_sakit',
+            'deskripsi_isu' => $request->input('jenis_sakit'),
+            'data_tambahan' => $data_tambahan,
+        ]);
+
+        // Next: soalan dewan makan
+        return redirect()->route('laporan.dewanmakan.soalan', $id_laporan)
+                         ->with('success', 'Laporan pelajar sakit disimpan.');
+    }
+
+    // ========================================
+    // REVIEW & SUBMIT
+    // ========================================
 
     // Review (summary)
     public function review($laporanId)

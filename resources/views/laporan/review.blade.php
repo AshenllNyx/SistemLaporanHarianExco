@@ -40,6 +40,7 @@
                         Tiada
                     @endif
                 </p>
+
             @elseif($butiran->jenis_butiran === 'disiplin')
                 <p><strong>Jenis Kesalahan:</strong> {{ $data['jenis_kesalahan'] ?? $butiran->deskripsi_isu }}</p>
                 <p><strong>Pelajar:</strong>
@@ -55,6 +56,29 @@
                 </p>
                 <p><strong>Tindakan:</strong> {{ $data['tindakan'] ?? '—' }}</p>
                 <p><strong>Catatan:</strong> {{ $data['catatan'] ?? '—' }}</p>
+
+            @elseif($butiran->jenis_butiran === 'kerosakan')
+                <p><strong>Dorm:</strong> {{ $butiran->dorm->nama_dorm ?? '-' }}</p>
+                <p><strong>Jenis Kerosakan:</strong> {{ $data['jenis_kerosakan'] ?? $butiran->deskripsi_isu }}</p>
+                <p><strong>Lokasi:</strong> {{ $data['lokasi'] ?? '—' }}</p>
+                <p><strong>Catatan:</strong> {{ $data['catatan'] ?? '—' }}</p>
+
+            @elseif($butiran->jenis_butiran === 'pelajar_sakit')
+                <p><strong>Jenis Sakit:</strong> {{ $data['jenis_sakit'] ?? $butiran->deskripsi_isu }}</p>
+                <p><strong>Pelajar:</strong>
+                    @if(!empty($data['pelajar']))
+                        <ul>
+                            @foreach($data['pelajar'] as $p)
+                                <li>{{ $p }}</li>
+                            @endforeach
+                        </ul>
+                    @else
+                        Tiada
+                    @endif
+                </p>
+                <p><strong>Tindakan:</strong> {{ $data['tindakan'] ?? '—' }}</p>
+                <p><strong>Catatan:</strong> {{ $data['catatan'] ?? '—' }}</p>
+                
             @else
                 <p>{{ $butiran->deskripsi_isu ?? '-' }}</p>
             @endif
