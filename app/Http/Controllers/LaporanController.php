@@ -34,8 +34,8 @@ class LaporanController extends Controller
         $laporan = LaporanHarian::create([
             'no_ic' => Auth::user()->no_ic ?? Auth::id(),
             'nama_exco' => json_encode([
-                $request->exco_1,
-                $request->exco_2,
+                $request->exco1,
+                $request->exco2,
             ]),
             'tarikh_laporan' => Carbon::now()->toDateString(),
             'status_laporan' => 'draf',
@@ -313,7 +313,14 @@ class LaporanController extends Controller
     public function review($laporanId)
     {
         $laporan = LaporanHarian::with('butiranLaporans.dorm')->findOrFail($laporanId);
-        return view('laporan.review', compact('laporan'));
+
+        // Decode EXCO IC list
+        $excos = json_decode($laporan->nama_exco, true) ?? [];
+
+        // Fetch EXCO names
+        $senarai_exco = User::whereIn('no_ic', $excos)->get()->keyBy('no_ic');
+
+        return view('laporan.review', compact('laporan', 'senarai_exco'));
     }
 
     // Final submit

@@ -4,35 +4,29 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Dorm>
- */
 class DormFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
-        // choose dorm name first so we can assign specific capacities
-        $dormNames = ['Dorm A', 'Dorm B', 'Dorm C', 'Dorm D'];
-        $nama = fake()->randomElement($dormNames);
-
-        // set capacity per dorm (specific for Dorm A/B, default for others)
-        $capacityMap = [
-            'Dorm A' => 8,
-            'Dorm B' => 12,
-            'Dorm C' => 10,
-            'Dorm D' => 6,
+        // 1. SENARAI BLOK → DORM
+        $blocks = [
+            'A' => ['A1', 'A2', 'A3', 'A4'],
+            'B' => ['B1', 'B2'],
+            'C' => ['C1', 'C2'],
+            'D' => ['D1'],
         ];
-        $capacity = $capacityMap[$nama] ?? 8;
 
-        // generate between 1 and capacity students
-        $count = random_int(1, $capacity);
+        // 2. PILIH BLOK
+        $blok = fake()->randomElement(array_keys($blocks));
+
+        // 3. PILIH DORM DALAM BLOK
+        $nama = fake()->randomElement($blocks[$blok]);
+
+        // 4. RANDOM BILANGAN PELAJAR
+        $capacity = fake()->numberBetween(5, 15);
+
         $students = [];
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $capacity; $i++) {
             $students[] = [
                 'no_ic' => fake()->unique()->numerify('###########'),
                 'nama' => fake()->name(),
@@ -42,7 +36,7 @@ class DormFactory extends Factory
 
         return [
             'nama_dorm' => $nama,
-            'capacity' => $capacity,
+            'blok' => $blok,
             'senarai_pelajar' => json_encode($students),
         ];
     }
