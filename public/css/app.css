@@ -55,6 +55,11 @@ body{background:var(--bg);display:flex;color:#0f172a}
     color:white;
 }
 
+.sidebar nav a.active {
+    background:linear-gradient(90deg,var(--accent),#4f46e5);
+    color:white;
+}
+
 /* USER BOX */
 .user-box {
     margin-top:auto;

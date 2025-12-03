@@ -10,12 +10,44 @@
 <form action="{{ route('laporan.storeDorm') }}" method="POST">
     @csrf
 
+    {{-- ===========================
+         PILIH 2 EXCO BERTUGAS
+       =========================== --}}
+    <div style="background:white;padding:20px;border-radius:12px;margin-bottom:20px;
+                box-shadow:0 6px 18px rgba(2,6,23,0.06)">
+
+        <h3 style="margin:0 0 10px 0;font-size:18px;font-weight:700">
+            EXCO Bertugas Hari Ini
+        </h3>
+
+        <label style="font-weight:600;display:block;margin-top:10px">EXCO 1</label>
+        <select name="exco1" required
+            style="padding:10px;border-radius:8px;width:260px;margin-bottom:14px">
+            <option value="">-- Pilih EXCO Pertama --</option>
+            @foreach($senaraiExco as $exco)
+                <option value="{{ $exco->no_ic }}">{{ $exco->name }}</option>
+            @endforeach
+        </select>
+
+        <label style="font-weight:600;display:block;">EXCO 2</label>
+        <select name="exco2" required
+            style="padding:10px;border-radius:8px;width:260px;margin-bottom:14px">
+            <option value="">-- Pilih EXCO Kedua --</option>
+            @foreach($senaraiExco as $exco)
+                <option value="{{ $exco->no_ic }}">{{ $exco->name }}</option>
+            @endforeach
+        </select>
+    </div>
+
+    {{-- ===========================
+         SENARAI DORM
+       =========================== --}}
     <div style="display:flex;flex-direction:column;gap:20px">
     @foreach($dorms as $dorm)
 
         <div style="background:white;padding:20px;border-radius:12px;
                     box-shadow:0 6px 18px rgba(2,6,23,0.06)">
-            
+
             <h3 style="margin:0 0 10px 0;font-size:18px;font-weight:700">
                 {{ $dorm->nama_dorm }}
             </h3>
@@ -39,7 +71,6 @@
             </label>
 
             @php
-                // Ambil senarai pelajar (JSON decode sekali lagi kalau double encoded)
                 $pelajar = $dorm->senarai_pelajar ?? [];
             @endphp
 
@@ -47,10 +78,9 @@
                 <div style="display:flex;flex-wrap:wrap;gap:12px">
 
                     @foreach($pelajar as $p)
-                        {{-- pastikan structure key betul --}}
                         @php
-                            $nama = isset($p['nama']) ? $p['nama'] : 'Pelajar Tidak Dikenal';
-                            $ic   = isset($p['no_ic']) ? $p['no_ic'] : null;
+                            $nama = $p['nama'] ?? 'Pelajar Tidak Dikenal';
+                            $ic   = $p['no_ic'] ?? null;
                         @endphp
 
                         <label style="display:flex;align-items:center;gap:8px;
@@ -64,7 +94,6 @@
                     @endforeach
 
                 </div>
-
             @else
                 <p style="color:#6b7280">Tiada pelajar dalam dorm ini.</p>
             @endif

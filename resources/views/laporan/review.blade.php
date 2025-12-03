@@ -1,96 +1,115 @@
 @extends('layouts.app')
 
-@section('title','Semak Laporan')
-
 @section('content')
-<h2 style="font-size:22px;font-weight:700">Semak Laporan</h2>
+<div class="container">
 
-@if(session('success'))
-    <div style="background:#ecfdf5;padding:10px;border-radius:8px;margin-bottom:12px">{{ session('success') }}</div>
-@endif
+    @php
+        $excos = json_decode($laporan->nama_exco, true);
 
-<div style="background:white;padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.06)">
-    <h3>Maklumat Exco: {{ $laporan->nama_exco }} ({{ $laporan->no_ic }})</h3>
-    <p>Tarikh laporan: {{ $laporan->tarikh_laporan }}</p>
+        if (!is_array($excos)) {
+            // kalau bukan array, jadikan array 1 nilai
+            $excos = [$laporan->nama_exco];
+        }
+    @endphp
 
-    <hr>
 
-    @foreach($laporan->butiranLaporans as $butiran)
-        <div style="margin-bottom:14px">
-            <h4 style="margin:0 0 6px 0">
-                @if($butiran->jenis_butiran === 'dorm')
-                    Dorm: {{ $butiran->dorm->nama_dorm ?? 'Dorm '.$butiran->id_dorm }}
-                @else
-                    {{ ucfirst($butiran->jenis_butiran) }}
-                @endif
+    <h2 style="font-size:26px;font-weight:800;margin-bottom:25px">Semakan Laporan Harian EXCO</h2>
+
+    {{-- TABLE MAKLUMAT ASAS LAPORAN --}}
+    <table style="width:100%;border-collapse:collapse;margin-bottom:25px;font-size:15px;">
+        <tr style="background:#f3f4f6">
+            <th style="padding:12px;border:1px solid #e5e7eb;text-align:left;width:25%">Butiran</th>
+            <th style="padding:12px;border:1px solid #e5e7eb;text-align:left;">Maklumat</th>
+        </tr>
+
+        <tr>
+            <td style="padding:12px;border:1px solid #e5e7eb;font-weight:600">Exco Bertugas</td>
+            <td style="padding:12px;border:1px solid #e5e7eb">
+                <ul style="margin:0;padding-left:20px">
+                    @foreach($excos as $exco)
+                        <li>{{ $exco }}</li>
+                    @endforeach
+                </ul>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding:12px;border:1px solid #e5e7eb;font-weight:600">Tarikh Laporan</td>
+            <td style="padding:12px;border:1px solid #e5e7eb">
+                {{ $laporan->tarikh_laporan }}
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding:12px;border:1px solid #e5e7eb;font-weight:600">Status Laporan</td>
+            <td style="padding:12px;border:1px solid #e5e7eb;text-transform:capitalize">
+                {{ $laporan->status_laporan }}
+            </td>
+        </tr>
+    </table>
+
+    <hr style="margin:30px 0;">
+
+    <h3 style="font-size:20px;font-weight:700;margin-bottom:20px">Butiran Laporan Mengikut Dorm</h3>
+
+    {{-- DORM BY DORM --}}
+    @foreach($laporan->butiran as $butiran)
+        <div style="border:1px solid #e5e7eb;border-radius:10px;margin-bottom:20px;padding:18px;background:white;box-shadow:0 2px 5px rgba(0,0,0,0.05);">
+
+            <h4 style="font-size:18px;font-weight:700;margin-bottom:10px;color:#2563eb">
+                Dorm: {{ $butiran->dorm->nama_dorm ?? 'Tidak Diketahui' }}
             </h4>
 
-            @php $data = $butiran->data_tambahan ?? []; @endphp
+            <table style="width:100%;border-collapse:collapse;margin-bottom:10px">
+                <tr>
+                    <td style="width:25%;font-weight:600;padding:10px;border:1px solid #e5e7eb;background:#f9fafb">
+                        Jenis Butiran
+                    </td>
+                    <td style="padding:10px;border:1px solid #e5e7eb">
+                        {{ ucfirst($butiran->jenis_butiran) }}
+                    </td>
+                </tr>
 
-            @if($butiran->jenis_butiran === 'dorm')
-                <p><strong>Kategori kebersihan:</strong> {{ $data['kategori_kebersihan'] ?? '-' }}</p>
-                <p><strong>Nama tidak hadir:</strong>
-                    @if(!empty($data['tidak_hadir']))
-                        <ul>
-                            @foreach($data['tidak_hadir'] as $n)
-                                <li>{{ $n }}</li>
-                            @endforeach
-                        </ul>
-                    @else
-                        Tiada
-                    @endif
-                </p>
+                <tr>
+                    <td style="width:25%;font-weight:600;padding:10px;border:1px solid #e5e7eb;background:#f9fafb">
+                        Deskripsi Isu
+                    </td>
+                    <td style="padding:10px;border:1px solid #e5e7eb">
+                        {{ $butiran->deskripsi_isu }}
+                    </td>
+                </tr>
 
-            @elseif($butiran->jenis_butiran === 'disiplin')
-                <p><strong>Jenis Kesalahan:</strong> {{ $data['jenis_kesalahan'] ?? $butiran->deskripsi_isu }}</p>
-                <p><strong>Pelajar:</strong>
-                    @if(!empty($data['pelajar']))
-                        <ul>
-                            @foreach($data['pelajar'] as $p)
-                                <li>{{ $p }}</li>
-                            @endforeach
-                        </ul>
-                    @else
-                        Tiada
-                    @endif
-                </p>
-                <p><strong>Tindakan:</strong> {{ $data['tindakan'] ?? '—' }}</p>
-                <p><strong>Catatan:</strong> {{ $data['catatan'] ?? '—' }}</p>
+                @if($butiran->data_tambahan)
+                    <tr>
+                        <td style="width:25%;font-weight:600;padding:10px;border:1px solid #e5e7eb;background:#f9fafb">
+                            Data Tambahan
+                        </td>
+                        <td style="padding:10px;border:1px solid #e5e7eb">
+                            @php
+                                $extras = json_decode($butiran->data_tambahan, true);
+                            @endphp
 
-            @elseif($butiran->jenis_butiran === 'kerosakan')
-                <p><strong>Dorm:</strong> {{ $butiran->dorm->nama_dorm ?? '-' }}</p>
-                <p><strong>Jenis Kerosakan:</strong> {{ $data['jenis_kerosakan'] ?? $butiran->deskripsi_isu }}</p>
-                <p><strong>Lokasi:</strong> {{ $data['lokasi'] ?? '—' }}</p>
-                <p><strong>Catatan:</strong> {{ $data['catatan'] ?? '—' }}</p>
-
-            @elseif($butiran->jenis_butiran === 'pelajar_sakit')
-                <p><strong>Jenis Sakit:</strong> {{ $data['jenis_sakit'] ?? $butiran->deskripsi_isu }}</p>
-                <p><strong>Pelajar:</strong>
-                    @if(!empty($data['pelajar']))
-                        <ul>
-                            @foreach($data['pelajar'] as $p)
-                                <li>{{ $p }}</li>
-                            @endforeach
-                        </ul>
-                    @else
-                        Tiada
-                    @endif
-                </p>
-                <p><strong>Tindakan:</strong> {{ $data['tindakan'] ?? '—' }}</p>
-                <p><strong>Catatan:</strong> {{ $data['catatan'] ?? '—' }}</p>
-                
-            @else
-                <p>{{ $butiran->deskripsi_isu ?? '-' }}</p>
-            @endif
+                            <ul style="margin:0;padding-left:18px">
+                                @foreach($extras as $key => $val)
+                                    <li><strong>{{ ucfirst($key) }}:</strong> {{ $val }}</li>
+                                @endforeach
+                            </ul>
+                        </td>
+                    </tr>
+                @endif
+            </table>
         </div>
     @endforeach
 
-    <form method="POST" action="{{ route('laporan.submit', ['laporan' => $laporan->id_laporan]) }}">
-        @csrf
-        <div style="display:flex;gap:12px;justify-content:flex-end">
-            <a href="{{ route('laporan.create') }}" style="padding:8px 12px;border-radius:8px;background:#f3f4f6;color:#111;text-decoration:none">Edit</a>
-            <button type="submit" style="padding:8px 14px;border-radius:8px;background:#10b981;color:white;border:none">Hantar Laporan</button>
-        </div>
-    </form>
+    <div style="margin-top:30px;">
+        <form action="{{ route('exco.submitReport', $laporan->id_laporan) }}" method="POST">
+            @csrf
+            <button type="submit" class="btn btn-primary" 
+                style="padding:10px 20px;font-weight:600;font-size:16px;">
+                Hantar Laporan
+            </button>
+        </form>
+    </div>
+
 </div>
 @endsection

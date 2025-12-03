@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\Dorm;
 use App\Models\LaporanHarian;
 use App\Models\ButiranLaporan;
+use App\Models\User;
 
 class LaporanController extends Controller
 {
@@ -15,7 +16,10 @@ class LaporanController extends Controller
     public function create()
     {
         $dorms = Dorm::all();
-        return view('laporan.create', compact('dorms'));
+
+        $senaraiExco = User::where('level', 'user')->get();
+
+        return view('laporan.create', compact('dorms', 'senaraiExco'));
     }
 
     // Store dorm step (create laporan draf + butiran_laporans)
@@ -29,10 +33,14 @@ class LaporanController extends Controller
         // create laporan draf
         $laporan = LaporanHarian::create([
             'no_ic' => Auth::user()->no_ic ?? Auth::id(),
-            'nama_exco' => Auth::user()->name ?? 'EXCO',
+            'nama_exco' => json_encode([
+                $request->exco_1,
+                $request->exco_2,
+            ]),
             'tarikh_laporan' => Carbon::now()->toDateString(),
             'status_laporan' => 'draf',
         ]);
+
 
         $kategori = $request->input('kategori', []);
         $absent = $request->input('absent', []); // array of arrays
@@ -215,6 +223,7 @@ class LaporanController extends Controller
     }
 
     // Store pelajar sakit
+    // Store pelajar sakit
     public function storePelajarSakit(Request $request)
     {
         $request->validate([
@@ -242,9 +251,58 @@ class LaporanController extends Controller
             'data_tambahan' => $data_tambahan,
         ]);
 
-        // Next: soalan dewan makan
+        // ✅ Redirect ke soalan dewan makan
         return redirect()->route('laporan.dewanmakan.soalan', $id_laporan)
                          ->with('success', 'Laporan pelajar sakit disimpan.');
+    }
+
+    // ========================================
+    // DEWAN MAKAN
+    // ========================================
+
+    // Soalan Dewan Makan? (YA / TIDAK)
+    public function soalanDewanMakan($id)
+    {
+        $laporan = LaporanHarian::findOrFail($id);
+        return view('laporan.soalan_dewan_makan', compact('laporan'));
+    }
+
+    // Show create form for laporan dewan makan
+    public function createDewanMakan($id)
+    {
+        $laporan = LaporanHarian::findOrFail($id);
+        return view('laporan.dewan_makan_create', compact('laporan'));
+    }
+
+    // Store dewan makan
+    public function storeDewanMakan(Request $request)
+    {
+        $request->validate([
+            'id_laporan' => 'required|exists:laporans,id_laporan',
+            'jenis_isu' => 'required|string|max:255',
+            'masa_makan' => 'nullable|string',
+            'catatan' => 'nullable|string',
+        ]);
+
+        $id_laporan = $request->input('id_laporan');
+
+        $data_tambahan = [
+            'jenis_isu' => $request->input('jenis_isu'),
+            'masa_makan' => $request->input('masa_makan'),
+            'catatan' => $request->input('catatan'),
+        ];
+
+        ButiranLaporan::create([
+            'id_laporan' => $id_laporan,
+            'id_dorm' => null,
+            'jenis_butiran' => 'dewan_makan',
+            'deskripsi_isu' => $request->input('jenis_isu'),
+            'data_tambahan' => $data_tambahan,
+        ]);
+
+        // Next: review (final step sebelum submit)
+        return redirect()->route('laporan.review', $id_laporan)
+                         ->with('success', 'Laporan dewan makan disimpan.');
     }
 
     // ========================================

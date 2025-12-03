@@ -22,7 +22,7 @@
             <a href="{{ route('users.index') }}">📄 Senarai User</a>
             <a href="">📄 Senarai Dorm</a>
         @else
-            <a href="{{ route('laporan.create') }}">📝 Borang Laporan Harian</a> 
+            <a href="{{ route('laporan.create') }}" class="     {{ Route::is('laporan.create') ? 'active' : '' }}">📝 Borang Laporan Harian</a> 
         @endif
 
 

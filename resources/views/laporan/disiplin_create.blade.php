@@ -48,7 +48,7 @@
 
         <div style="display:flex;justify-content:flex-end;gap:8px">
             <a href="{{ route('laporan.review', $laporan->id_laporan) }}" style="padding:10px 14px;border-radius:8px;background:#e5e7eb;color:#111;text-decoration:none">Lewat</a>
-            <button type="submit" style="padding:10px 14px;border-radius:8px;background:#2563eb;color:white;border:none">Simpan & Semak</button>
+            <button type="submit" style="padding:10px 14px;border-radius:8px;background:#2563eb;color:white;border:none">Next & Semak</button>
         </div>
     </form>
 </div>

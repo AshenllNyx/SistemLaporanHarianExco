@@ -121,4 +121,20 @@ Route::middleware('auth')->group(function () {
     // ➤ STEP 7 — Simpan laporan pelajar sakit
     Route::post('/laporan/pelajar-sakit/store', [LaporanController::class, 'storePelajarSakit'])
         ->name('laporan.pelajarsakit.store');
+
+    // ========================================
+    // DEWAN MAKAN
+    // ========================================
+
+    // ➤ STEP 8 — Soalan Dewan Makan? (YA / TIDAK)
+    Route::get('/laporan/dewan-makan/{id}', [LaporanController::class, 'soalanDewanMakan'])
+        ->name('laporan.dewanmakan.soalan');
+
+    // ➤ STEP 9 — Borang Laporan Dewan Makan (jika YA)
+    Route::get('/laporan/dewan-makan/create/{id}', [LaporanController::class, 'createDewanMakan'])
+        ->name('laporan.dewanmakan.create');
+
+    // ➤ STEP 9 — Simpan laporan dewan makan
+    Route::post('/laporan/dewan-makan/store', [LaporanController::class, 'storeDewanMakan'])
+        ->name('laporan.dewanmakan.store');
 });
