@@ -15,6 +15,39 @@
         $senarai_exco = \App\Models\User::whereIn('no_ic', $excos)
                         ->get()
                         ->keyBy('no_ic');
+
+
+        // Fungsi universal tukar IC → Nama
+        function tukarKeNama($value) {
+            // Jika bukan array, convert string → array
+            if (!is_array($value)) {
+                $value = explode(',', $value);
+            }
+
+            $value = array_filter(array_map('trim', $value));
+
+            // Dapatkan pelajar
+            $pelajar = \App\Models\User::whereIn('no_ic', $value)
+                        ->get()
+                        ->keyBy('no_ic');
+
+            // Convert IC kepada nama
+            return array_map(function($v) use ($pelajar) {
+                return $pelajar[$v]->name ?? $v;
+            }, $value);
+        }
+
+        // Fungsi detect jika array tu penuh IC
+        function semuaIC($arr) {
+            if (!is_array($arr)) return false;
+            foreach ($arr as $item) {
+                if (!preg_match('/^[0-9]{6,12}$/', $item)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
     @endphp
 
 
@@ -33,9 +66,7 @@
             <td style="padding:12px;border:1px solid #e5e7eb">
                 <ul style="margin:0;padding-left:20px">
                     @foreach($excos as $ic)
-                        <li>
-                            {{ $senarai_exco[$ic]->name ?? $ic }}
-                        </li>
+                        <li>{{ $senarai_exco[$ic]->name ?? $ic }}</li>
                     @endforeach
                 </ul>
             </td>
@@ -67,7 +98,7 @@
         <div style="border:1px solid #e5e7eb;border-radius:10px;margin-bottom:20px;padding:18px;background:white;box-shadow:0 2px 5px rgba(0,0,0,0.05);">
 
             <h4 style="font-size:18px;font-weight:700;margin-bottom:10px;color:#2563eb">
-                Dorm: {{ $butiran->dorm->nama_dorm ?? 'Tidak Diketahui' }}
+                Dorm: {{ $butiran->dorm->nama_dorm ?? '–' }}
             </h4>
 
             <table style="width:100%;border-collapse:collapse;margin-bottom:10px">
@@ -92,40 +123,69 @@
                     </td>
                 </tr>
 
+
                 {{-- DATA TAMBAHAN --}}
-                @if($butiran->data_tambahan)
-                    @php
-                        $extras = is_array($butiran->data_tambahan)
-                            ? $butiran->data_tambahan
-                            : json_decode($butiran->data_tambahan, true);
-                    @endphp
+                @php
+                    $extras = is_array($butiran->data_tambahan)
+                        ? $butiran->data_tambahan
+                        : json_decode($butiran->data_tambahan, true);
+                @endphp
 
-                    <tr>
-                        <td style="width:25%;font-weight:600;padding:10px;border:1px solid #e5e7eb;background:#f9fafb">
-                            Data Tambahan
-                        </td>
-                        <td style="padding:10px;border:1px solid #e5e7eb">
-                            <ul style="margin:0;padding-left:18px">
+                @if($extras)
+                    @foreach($extras as $key => $val)
 
-                                @foreach($extras as $key => $val)
-                                    <li>
-                                        <strong>{{ ucfirst(str_replace('_',' ', $key)) }}:</strong>
+                        @php
+                            // NORMALISE semua jenis data → array string
+                            if (is_array($val)) {
+                                // convert object array → flat array
+                                $val = array_map(function($v){
+                                    if (is_array($v) && isset($v['ic'])) return $v['ic'];
+                                    if (is_object($v) && isset($v->ic)) return $v->ic;
+                                    return $v;
+                                }, $val);
+                            }
 
-                                        @if(is_array($val))
-                                            {{ implode(', ', $val) }}
-                                        @else
-                                            {{ $val ?: '-' }}
-                                        @endif
-                                    </li>
-                                @endforeach
+                            // jika nested object → flatten
+                            if (is_object($val)) {
+                                $val = (array)$val;
+                            }
 
-                            </ul>
-                        </td>
-                    </tr>
+                            // string "ic1, ic2"
+                            if (is_string($val) && str_contains($val, ',')) {
+                                $val = array_map('trim', explode(',', $val));
+                            }
+
+                            // jika betul-betul IC array
+                            $shouldConvert = is_array($val) && semuaIC($val);
+
+                            if ($shouldConvert) {
+                                $papar = tukarKeNama($val);
+                            } else {
+                                $papar = $val;
+                            }
+
+                        @endphp
+
+                        <tr>
+                            <td style="width:25%;font-weight:600;padding:10px;border:1px solid #e5e7eb;background:#f9fafb">
+                                {{ ucfirst(str_replace('_',' ', $key)) }}
+                            </td>
+                            <td style="padding:10px;border:1px solid #e5e7eb">
+                                @if(is_array($papar))
+                                    {{ implode(', ', $papar) }}
+                                @else
+                                    {{ $papar ?: '-' }}
+                                @endif
+                            </td>
+                        </tr>
+
+                    @endforeach
                 @endif
+
             </table>
         </div>
     @endforeach
+
 
     {{-- BUTTON HANTAR --}}
     <div style="margin-top:30px;">

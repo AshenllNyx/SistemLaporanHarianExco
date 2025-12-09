@@ -12,6 +12,27 @@ use App\Models\User;
 
 class LaporanController extends Controller
 {
+    public function homepage()
+    {
+        $user = Auth::user();
+
+        // semua laporan milik user (ubah filter jika mahu semua user)
+        $laporans = LaporanHarian::with('butiranLaporans')
+                    ->when($user, function($q) use ($user) {
+                        // filter supaya user hanya nampak laporan dia sendiri
+                        $q->where('no_ic', $user->no_ic);
+                    })
+                    ->orderBy('tarikh_laporan', 'desc')
+                    ->get();
+
+        // laporan yang perlu dihantar semula (ubah status value ikut DB anda)
+        $laporanHantarSemula = $laporans->filter(function($l) {
+            return in_array($l->status_laporan, ['hantar_semula','tolak','perlu_hantar_semula']);
+        });
+
+        return view('homepage', compact('laporans', 'laporanHantarSemula'));
+    }
+
     // Show dorm form (step 1)
     public function create()
     {

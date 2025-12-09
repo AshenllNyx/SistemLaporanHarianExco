@@ -78,33 +78,20 @@
                         <option value="Kotor">Kotor</option>
                     </select>
 
-                    {{-- Senarai Pelajar --}}
+                    {{-- NAMA TIDAK HADIR (textarea) --}}
                     <label style="font-weight:600;display:block;margin-bottom:6px">
-                        Nama Tidak Hadir
+                        Nama Tidak Hadir (Jika Ada)
                     </label>
 
-                    @php
-                        $pelajar = is_array($dorm->senarai_pelajar) ? $dorm->senarai_pelajar : json_decode($dorm->senarai_pelajar, true);
-                    @endphp
+                    <textarea name="absent[{{ $dorm->id_dorm }}]"
+                              rows="3"
+                              placeholder="Contoh: Ahmad Zulkifli, Lim Jia Wen, Siti Aminah ..."
+                              style="width:100%;padding:12px;border-radius:8px;
+                                     border:1px solid #d1d5db;resize:vertical;background:#f9fafb"></textarea>
 
-                    @if(is_array($pelajar) && count($pelajar) > 0)
-                        <div style="display:flex;flex-wrap:wrap;gap:12px">
-                            @foreach($pelajar as $p)
-                                @php
-                                    $nama = $p['nama'] ?? 'Pelajar Tidak Dikenal';
-                                    $ic   = $p['no_ic'] ?? null;
-                                @endphp
-                                <label style="display:flex;align-items:center;gap:8px;
-                                              background:#f9fafb;padding:6px 10px;
-                                              border-radius:8px;border:1px solid #e5e7eb">
-                                    <input type="checkbox" name="absent[{{ $dorm->id_dorm }}][]" value="{{ $ic }}">
-                                    {{ $nama }}
-                                </label>
-                            @endforeach
-                        </div>
-                    @else
-                        <p style="color:#6b7280">Tiada pelajar dalam dorm ini.</p>
-                    @endif
+                    <p style="font-size:13px;color:#6b7280;margin-top:6px">
+                        *Masukkan nama pelajar yang tidak hadir. Boleh tulis banyak nama.
+                    </p>
 
                 </div>
             @endforeach

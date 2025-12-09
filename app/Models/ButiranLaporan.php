@@ -32,4 +32,8 @@ class ButiranLaporan extends Model
         return $this->belongsTo(Dorm::class, 'id_dorm', 'id_dorm');
     }   
 
+    public function laporan()
+    {
+        return $this->belongsTo(\App\Models\LaporanHarian::class, 'id_laporan', 'id_laporan');
+    }
 }
