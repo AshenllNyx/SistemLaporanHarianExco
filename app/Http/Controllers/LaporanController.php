@@ -17,7 +17,7 @@ class LaporanController extends Controller
         $user = Auth::user();
 
         // semua laporan milik user (ubah filter jika mahu semua user)
-        $laporans = LaporanHarian::with('butiranLaporans')
+        $laporans = LaporanHarian::with('butiranLaporans.dorm')
                     ->when($user, function($q) use ($user) {
                         // filter supaya user hanya nampak laporan dia sendiri
                         $q->where('no_ic', $user->no_ic);

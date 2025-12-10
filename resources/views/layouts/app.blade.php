@@ -16,14 +16,17 @@
     </div>
 
     <nav>
-        <a href="">📄 Senarai Laporan</a>
+        <a href="{{ route('homepage') }}" class="{{ Route::is('homepage') ? 'active' : '' }}">📄 Senarai Laporan</a>
 
         @if ( Auth::user()->level == 'admin' )
-            <a href="{{ route('users.index') }}">📄 Senarai User</a>
-            <a href="">📄 Senarai Dorm</a>
+            <a href="{{ route('users.index') }}" class="{{ Route::is('users.*') ? 'active' : '' }}">📄 Senarai User</a>
+            <a href="{{ route('dorms.index') }}" class="{{ Route::is('dorms.*') ? 'active' : '' }}">🏠 Senarai Dorm</a>
         @else
-            <a href="{{ route('laporan.create') }}" class="     {{ Route::is('laporan.create') ? 'active' : '' }}">📝 Borang Laporan Harian</a> 
+            <a href="{{ route('laporan.create') }}" class="{{ Route::is('laporan.create') ? 'active' : '' }}">📝 Borang Laporan Harian</a> 
         @endif
+
+        {{-- Tambah Dorm (boleh dicapai semua user, ikut keperluan) --}}
+        <a href="{{ route('dorms.create') }}" class="{{ Route::is('dorms.create') ? 'active' : '' }}">➕ Tambah Dorm</a>
 
 
     </nav>

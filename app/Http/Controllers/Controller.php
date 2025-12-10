@@ -2,27 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\LaporanHarian;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Routing\Controller as BaseController;
 
-class LoginController extends Controller
+class Controller extends BaseController
 {
-    public function homepage()
-    {
-        $user = Auth::user();
-
-        // Senarai laporan user ini sahaja
-        $laporans = LaporanHarian::with('butiranLaporans')
-                    ->where('no_ic', $user->no_ic)
-                    ->orderBy('tarikh_laporan', 'desc')
-                    ->get();
-
-        // Jika nak letak fungsi “hantar semula”
-        $laporanHantarSemula = LaporanHarian::where('no_ic', $user->no_ic)
-                    ->where('status_laporan', 'perlu_hantar_semula')
-                    ->get();
-
-        return view('homepage', compact('laporans', 'laporanHantarSemula'));
-    }
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 }

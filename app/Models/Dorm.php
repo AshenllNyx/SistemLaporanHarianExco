@@ -12,6 +12,7 @@ class Dorm extends Model
     protected $primaryKey = 'id_dorm';
     protected $fillable = [
         'nama_dorm',
+        'blok',
         'senarai_pelajar',
         'capacity',
     ];

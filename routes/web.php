@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\DormController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,9 +32,12 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
 
     // Homepage
-    Route::get('/homepage', function () {
-        return view('homepage');
-    })->name('homepage');
+    Route::get('/homepage', [LaporanController::class, 'homepage'])->name('homepage');
+
+    // Dorms
+    Route::get('/dorms', [DormController::class, 'index'])->name('dorms.index');
+    Route::get('/dorms/create', [DormController::class, 'create'])->name('dorms.create');
+    Route::post('/dorms', [DormController::class, 'store'])->name('dorms.store');
 
     // Senarai User (admin only)
     Route::get('/users', [UserController::class, 'index'])->name('users.index');

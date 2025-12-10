@@ -92,33 +92,69 @@
                 </thead>
                 <tbody>
                     @foreach($laporans as $lap)
-                        <tr>
-                            <td>{{ $lap->tarikh_laporan ?? $lap->created_at->toDateString() }}</td>
-                            <td>
-                                @php $s = $lap->status_laporan; @endphp
-                                @if($s == 'dihantar') <span class="badge green">Dihantar</span>
-                                @elseif(in_array($s,['hantar_semula','perlu_hantar_semula','tolak'])) <span class="badge red">Perlu Semula</span>
-                                @elseif($s == 'draf') <span class="badge yellow">Draf</span>
-                                @else <span class="badge">{{ $s }}</span>
-                                @endif
-                            </td>
-                            <td>
-                                {{-- paparkan ringkasan butiran jika ada --}}
-                                @if($lap->butiranLaporans && $lap->butiranLaporans->count())
-                                    @foreach($lap->butiranLaporans as $b)
-                                        <div style="font-size:13px;margin-bottom:6px">
+                    <tr>
+                        <td>{{ $lap->tarikh_laporan ?? $lap->created_at->toDateString() }}</td>
+                        <td>
+                            @php $s = $lap->status_laporan; @endphp
+                            @if($s == 'dihantar') <span class="badge green">Dihantar</span>
+                            @elseif(in_array($s,['hantar_semula','perlu_hantar_semula','tolak'])) <span class="badge red">Perlu Semula</span>
+                            @elseif($s == 'draf') <span class="badge yellow">Draf</span>
+                            @else <span class="badge">{{ $s }}</span>
+                            @endif
+                        </td>
+                        <td>
+                            {{-- paparkan ringkasan butiran jika ada --}}
+                            @if($lap->butiranLaporans && $lap->butiranLaporans->count())
+                                @foreach($lap->butiranLaporans as $b)
+                                    @php
+                                        $data = $b->data_tambahan ?? [];
+                                        $dormName = $b->dorm->nama_dorm ?? ($b->id_dorm ? 'Dorm #'.$b->id_dorm : '-');
+                                    @endphp
+                                    <div style="font-size:13px;margin-bottom:6px">
+                                        @if($b->jenis_butiran === 'dorm')
+                                            <strong>Dorm {{ $dormName }}:</strong>
+                                            Kebersihan: {{ $data['kategori_kebersihan'] ?? '-' }}.
+                                            @php
+                                                $absent = $data['tidak_hadir'] ?? [];
+                                                if (is_string($absent)) {
+                                                    $absentList = $absent;
+                                                } elseif(is_array($absent) && count($absent)) {
+                                                    $absentList = implode(', ', $absent);
+                                                } else {
+                                                    $absentList = '-';
+                                                }
+                                            @endphp
+                                            Tidak hadir: {{ $absentList }}
+                                        @elseif($b->jenis_butiran === 'disiplin')
+                                            <strong>Disiplin:</strong>
+                                            Kesalahan: {{ $data['jenis_kesalahan'] ?? $b->deskripsi_isu ?? '-' }}.
+                                            Pelajar: {{ isset($data['pelajar']) && is_array($data['pelajar']) ? count($data['pelajar']) : '-' }}
+                                        @elseif($b->jenis_butiran === 'kerosakan')
+                                            <strong>Kerosakan ({{ $dormName }}):</strong>
+                                            {{ $data['jenis_kerosakan'] ?? $b->deskripsi_isu ?? '-' }}
+                                            @if(!empty($data['lokasi'])) di {{ $data['lokasi'] }} @endif
+                                        @elseif($b->jenis_butiran === 'pelajar_sakit')
+                                            <strong>Pelajar Sakit:</strong>
+                                            {{ $data['jenis_sakit'] ?? $b->deskripsi_isu ?? '-' }}.
+                                            Pelajar: {{ isset($data['pelajar']) && is_array($data['pelajar']) ? count($data['pelajar']) : '-' }}
+                                        @elseif($b->jenis_butiran === 'dewan_makan')
+                                            <strong>Dewan Makan:</strong>
+                                            {{ $data['jenis_isu'] ?? $b->deskripsi_isu ?? '-' }}
+                                            @if(!empty($data['masa_makan'])) ({{ $data['masa_makan'] }}) @endif
+                                        @else
                                             <strong>{{ ucfirst($b->jenis_butiran) }}:</strong>
-                                            {{ is_array($b->data_tambahan) ? json_encode($b->data_tambahan) : (is_string($b->data_tambahan) ? $b->data_tambahan : ($b->deskripsi_isu ?? '-')) }}
-                                        </div>
-                                    @endforeach
-                                @else
-                                    <span class="muted">Tiada butiran</span>
-                                @endif
-                            </td>
-                            <td style="text-align:right">
-                                <a href="{{ route('laporan.review', $lap->id_laporan) }}" class="btn">Lihat</a>
-                            </td>
-                        </tr>
+                                            {{ is_array($data) ? json_encode($data) : ($data ?? $b->deskripsi_isu ?? '-') }}
+                                        @endif
+                                    </div>
+                                @endforeach
+                            @else
+                                <span class="muted">Tiada butiran</span>
+                            @endif
+                        </td>
+                        <td style="text-align:right">
+                            <a href="{{ route('laporan.review', $lap->id_laporan) }}" class="btn">Lihat</a>
+                        </td>
+                    </tr>
                     @endforeach
                 </tbody>
             </table>
