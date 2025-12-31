@@ -16,7 +16,13 @@
     </div>
 
     <nav>
+        @if ( Auth::user()->level == 'admin' )
+            <a href="{{ route('homepage.admin') }}" class="{{ Route::is('homepage.admin') ? 'active' : '' }}">🏠 Laman Utama Admin</a>
+        @else
         <a href="{{ route('homepage') }}" class="{{ Route::is('homepage') ? 'active' : '' }}">📄 Senarai Laporan</a>
+        @endif
+
+         {{-- Navigation based on user level --}}
 
         @if ( Auth::user()->level == 'admin' )
             <a href="{{ route('users.index') }}" class="{{ Route::is('users.*') ? 'active' : '' }}">📄 Senarai User</a>

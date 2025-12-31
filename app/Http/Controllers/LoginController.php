@@ -32,6 +32,13 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
+            
+            // Redirect based on user level
+            $user = Auth::user();
+            if ($user->level === 'admin') {
+                return redirect()->intended('/homepage-admin');
+            }
+            
             return redirect()->intended('/homepage');
         }
 
@@ -76,23 +83,7 @@ class LoginController extends Controller
         return redirect()->intended('/homepage');
     }
 
-    /**
-     * Homepage - dashboard.
-     */
-    public function homepage()
-    {
-        // Laporan yang perlu dihantar semula
-        $laporanHantarSemula = Laporan::whereIn('status_laporan', ['hantar_semula', 'tolak'])
-            ->orderBy('tarikh_laporan', 'desc')
-            ->get();
-
-        // Senarai laporan terkini
-        $laporanTerkini = Laporan::orderBy('tarikh_laporan', 'desc')
-            ->take(20)
-            ->get();
-
-        return view('homepage', compact('laporanHantarSemula', 'laporanTerkini'));
-    }
+   
 
     /**
      * Log the user out.

@@ -33,6 +33,77 @@ class LaporanController extends Controller
         return view('homepage', compact('laporans', 'laporanHantarSemula'));
     }
 
+    // Admin homepage - report tracking & statistics
+   public function homepageAdmin(Request $request)
+{
+    // 1. STATISTIK GLOBAL (Tidak terkesan dengan filter)
+    // Kita buat kiraan terus daripada model tanpa filter daripada $request
+    $totalLaporans = LaporanHarian::count();
+    $draftCount = LaporanHarian::where('status_laporan', 'draf')->count();
+    $submittedCount = LaporanHarian::where('status_laporan', 'dihantar')->count();
+    $resubmitCount = LaporanHarian::whereIn('status_laporan', ['hantar_semula', 'tolak', 'perlu_hantar_semula'])->count();
+
+    // 2. QUERY UNTUK SENARAI REKOD (Terkesan dengan filter)
+    $fromDate = $request->get('from_date');
+    $toDate = $request->get('to_date');
+    $status = $request->get('status', 'all');
+
+    $query = LaporanHarian::with('butiranLaporans.dorm');
+
+    // Filter Status
+    if ($status && $status !== 'all') {
+        if ($status === 'resubmit') {
+            $query->whereIn('status_laporan', ['hantar_semula', 'tolak', 'perlu_hantar_semula']);
+        } else {
+            $query->where('status_laporan', $status);
+        }
+    }
+
+    // Filter Tarikh
+    if ($fromDate) {
+        $query->whereDate('tarikh_laporan', '>=', $fromDate);
+    }
+    if ($toDate) {
+        $query->whereDate('tarikh_laporan', '<=', $toDate);
+    }
+
+    // Ambil data yang telah difilter untuk jadual sahaja
+    $recentLaporans = $query->orderBy('tarikh_laporan', 'desc')->take(50)->get();
+
+    // 3. PEMPROSESAN NAMA EXCO (Hanya untuk data dalam jadual)
+    $parseExcoNames = function($nama_exco_json) {
+        $excoIcs = json_decode($nama_exco_json, true) ?? [];
+        $excoIcs = array_filter($excoIcs, fn($ic) => !is_null($ic) && $ic !== '');
+        
+        if (empty($excoIcs)) return '-';
+        
+        $names = User::whereIn('no_ic', $excoIcs)->pluck('name')->toArray();
+        return !empty($names) ? implode(', ', $names) : '-';
+    };
+
+    foreach ($recentLaporans as $laporan) {
+        $laporan->display_nama_exco = $parseExcoNames($laporan->nama_exco);
+    }
+
+    // Status breakdown (Optional: Jika anda mahu pie chart/list bawah ikut filter, guna $recentLaporans)
+    $laporanByStatus = collect([
+        ['status_laporan' => 'draf', 'total' => $draftCount],
+        ['status_laporan' => 'dihantar', 'total' => $submittedCount],
+        ['status_laporan' => 'hantar_semula', 'total' => $resubmitCount],
+    ]);
+
+    return view('homepageAdmin', compact(
+        'totalLaporans',
+        'draftCount', 
+        'submittedCount',
+        'resubmitCount',
+        'laporanByStatus',
+        'recentLaporans'
+    ));
+}
+
+
+
     // Show dorm form (step 1)
     public function create()
     {
@@ -41,6 +112,26 @@ class LaporanController extends Controller
         $senaraiExco = User::where('level', 'user')->get();
 
         return view('laporan.create', compact('dorms', 'senaraiExco'));
+    }
+
+    /**
+     * Destroy the specified laporan and its related butiran.
+     */
+    public function destroy($id)
+    {
+        $laporan = LaporanHarian::with('butiranLaporans')->find($id);
+        if (! $laporan) {
+            return redirect()->back()->with('error', 'Laporan tidak ditemui.');
+        }
+
+        // delete detail records first
+        if ($laporan->butiranLaporans()->exists()) {
+            $laporan->butiranLaporans()->delete();
+        }
+
+        $laporan->delete();
+
+        return redirect()->route('homepage.admin')->with('success', 'Laporan telah dipadam.');
     }
 
     // Store dorm step (create laporan draf + butiran_laporans)
@@ -353,5 +444,28 @@ class LaporanController extends Controller
         $laporan->save();
 
         return redirect()->route('homepage')->with('success','Laporan berjaya dihantar.');
+    }
+
+    //review admin
+    public function reviewAdmin($laporanId)
+    {
+        $laporan = LaporanHarian::with('butiranLaporans.dorm')->findOrFail($laporanId);
+        // Decode EXCO IC list
+        $excos = json_decode($laporan->nama_exco, true) ?? [];
+        // Fetch EXCO names
+        $senarai_exco = User::whereIn('no_ic', $excos)->get()->keyBy('no_ic');
+        return view('laporan.reviewAdmin', compact('laporan', 'senarai_exco'));
+    }
+
+    /**
+     * Pengesahan oleh admin — mark laporan as confirmed.
+     */
+    public function pengesahan(Request $request, $laporanId)
+    {
+        $laporan = LaporanHarian::findOrFail($laporanId);
+        $laporan->status_laporan = 'disahkan';
+        $laporan->save();
+
+        return redirect()->route('homepage.admin')->with('success', 'Laporan telah disahkan.');
     }
 }

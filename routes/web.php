@@ -33,6 +33,9 @@ Route::middleware('auth')->group(function () {
 
     // Homepage
     Route::get('/homepage', [LaporanController::class, 'homepage'])->name('homepage');
+    
+    // Admin Homepage - Report Tracking
+    Route::get('/homepage-admin', [LaporanController::class, 'homepageAdmin'])->name('homepage.admin');
 
     // Dorms
     Route::get('/dorms', [DormController::class, 'index'])->name('dorms.index');
@@ -42,6 +45,8 @@ Route::middleware('auth')->group(function () {
     // Senarai User (admin only)
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
 
+    //search laporan
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 
     /*
     |--------------------------------------------------------------------------
@@ -106,9 +111,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/review/{id}', [LaporanController::class, 'review'])
         ->name('laporan.review');
 
+    // ➤ DELETE — Hapus laporan (admin)
+    Route::delete('/laporan/{laporan}', [LaporanController::class, 'destroy'])
+        ->name('laporan.destroy');
+
     // ➤ STEP 7 — Submit laporan
     Route::post('/laporan/{laporan}/submit', [LaporanController::class, 'submit'])
         ->name('laporan.submit');
+
+    // review admin
+    Route::get('/laporan/review-admin/{id}', [LaporanController::class, 'reviewAdmin'])
+        ->name('laporan.reviewAdmin');
+
+    // ➤ PENGESAHAN — Admin confirm laporan
+    Route::post('/laporan/{laporan}/pengesahan', [LaporanController::class, 'pengesahan'])
+        ->name('laporan.pengesahan');
 
     // ========================================
     // PELAJAR SAKIT
