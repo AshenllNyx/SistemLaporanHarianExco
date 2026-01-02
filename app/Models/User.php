@@ -34,6 +34,7 @@ class User extends Authenticatable
         'jantina',
         'email',
         'level',
+        'is_approved',
         'password',
     ];
 

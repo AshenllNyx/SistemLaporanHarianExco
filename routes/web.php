@@ -37,6 +37,11 @@ Route::middleware('auth')->group(function () {
     // Admin Homepage - Report Tracking
     Route::get('/homepage-admin', [LaporanController::class, 'homepageAdmin'])->name('homepage.admin');
 
+    // Profile Management
+    Route::get('/profile/edit', [UserController::class, 'editProfile'])->name('profile.edit');
+    Route::get('/profile/edit-admin', [UserController::class, 'editProfileAdmin'])->name('profile.editAdmin');
+    Route::put('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
+
     // Dorms
     Route::get('/dorms', [DormController::class, 'index'])->name('dorms.index');
     Route::get('/dorms/create', [DormController::class, 'create'])->name('dorms.create');
@@ -44,6 +49,10 @@ Route::middleware('auth')->group(function () {
 
     // Senarai User (admin only)
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::post('/users/{no_ic}/approve', [UserController::class, 'approve'])->name('users.approve');
+    Route::get('/users/{no_ic}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{no_ic}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{no_ic}', [UserController::class, 'destroy'])->name('users.destroy');
 
     //search laporan
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');

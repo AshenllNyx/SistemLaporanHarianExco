@@ -41,7 +41,9 @@
     <div class="avatar"></div>
     <p>{{ Auth::user()->name ?? 'username' }}</p>
 
-    <form action="{{ route('logout') }}" method="POST" style="margin-top:12px;">
+    <a href="{{ Auth::user()->level == 'admin' ? route('profile.editAdmin') : route('profile.edit') }}" style="display:inline-block; margin-top:8px; margin-bottom:8px; padding:8px 12px; background:#f3f4f6; color:#374151; text-decoration:none; border-radius:6px; font-size:13px; font-weight:600; width:100%; text-align:center; transition:background 0.2s;" onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">⚙️ Edit Profil</a>
+
+    <form action="{{ route('logout') }}" method="POST" style="margin-top:8px;">
         @csrf
         <button class="logout-btn" type="submit">Log Out</button>
     </form>
