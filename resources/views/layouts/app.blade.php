@@ -11,8 +11,7 @@
 
 <div class="sidebar">
     <div class="brand-side">
-        <div class="logo">Ex</div>
-
+		<img class="logo" src="{{ asset("images/logo.jpeg") }}" alt="">
     </div>
 
     <nav>

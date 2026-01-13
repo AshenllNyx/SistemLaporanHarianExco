@@ -8,12 +8,12 @@
 		:root{--card-bg:#ffffff;--muted:#6b7280;--accent:#2563eb}
 		*{box-sizing:border-box}
 		html,body{height:100%}
-		body{margin:0;font-family:Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;color:#0f172a;background:linear-gradient(135deg,#eef2ff 0%, #eef2ff 100%);display:flex;align-items:center;justify-content:center;padding:24px}
+		body{margin:0;font-family:Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;color:#0f172a;background:url("{{ asset('images/bg.jpeg') }}") center center / cover no-repeat fixed;display:flex;align-items:center;justify-content:center;padding:24px}
 		.wrap{width:100%;max-width:960px;display:grid;grid-template-columns:1fr 420px;gap:32px;align-items:center}
 		.promo{display:flex;flex-direction:column;gap:18px;padding:32px}
-		.promo h2{margin:0;font-size:28px;color:#0f172a}
+		.promo h2{margin:0;font-size:28px;color:#d9ff00}
 		.promo p{margin:0;color:var(--muted);font-size:15px}
-		.card{background:var(--card-bg);border-radius:14px;padding:28px;box-shadow:0 10px 30px rgba(2,6,23,0.08);border:1px solid rgba(15,23,42,0.04)}
+		.card{background:var(--card-bg);border-radius:14px;padding:28px;box-shadow:0 10px 30px rgba(2,6,23,0.08);border:1px solid rgba(255, 255, 255, 0.04)}
 		.brand{display:flex;gap:12px;align-items:center;margin-bottom:14px}
 		.logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#4f46e5);display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
 		h1{margin:0;font-size:18px;color:#0f172a}
@@ -24,7 +24,7 @@
 		input:focus{outline:none;box-shadow:0 6px 18px rgba(37,99,235,0.12);border-color:var(--accent)}
 		.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
 		.remember{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px}
-		.btn{background:linear-gradient(90deg,var(--accent),#4f46e5);color:white;padding:10px 16px;border-radius:10px;border:none;font-weight:600;cursor:pointer}
+		.btn{background:linear-gradient(90deg,var(-accent),#4f46e5);color:white;padding:10px 16px;border-radius:10px;border:none;font-weight:600;cursor:pointer}
 		.btn:active{transform:translateY(1px)}
 		.error{background:#fff1f2;color:#7f1d1d;padding:10px;border-radius:8px;margin-bottom:12px;border:1px solid rgba(185,28,28,0.08)}
 		.help{margin-top:12px;display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
@@ -40,7 +40,7 @@
 
 		<section class="card" aria-labelledby="login-title">
 			<div class="brand">
-				<div class="logo">Ex</div>
+				<img class="logo" src="{{ asset("images/logo.jpeg") }}" alt="">
 				<div>
 					<h1 id="login-title">Sign in to your account</h1>
 					<div class="desc">Enter your username and password to continue.</div>

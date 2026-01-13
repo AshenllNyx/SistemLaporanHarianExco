@@ -32,14 +32,14 @@ body{background:var(--bg);display:flex;color:#0f172a}
 }
 
 .logo {
-    width:46px;height:46px;border-radius:10px;
+    width:90px;height:90px;border-radius:10px;
     background:linear-gradient(135deg,var(--accent),#4f46e5);
     display:flex;align-items:center;justify-content:center;
     color:white;font-weight:700;font-size:17px;
 }
 
 .sidebar nav a {
-    display:block;
+    display:block;  
     padding:10px 12px;
     border-radius:10px;
     margin-bottom:10px;
