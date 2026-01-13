@@ -468,4 +468,18 @@ class LaporanController extends Controller
 
         return redirect()->route('homepage.admin')->with('success', 'Laporan telah disahkan.');
     }
+
+    public function hantarSemula(Request $request, $laporanId)
+    {
+        $request->validate([
+            'sebab_hantar_semula' => 'nullable|string|max:2000',
+        ]);
+
+        $laporan = LaporanHarian::findOrFail($laporanId);
+        $laporan->status_laporan = 'hantar_semula';
+        $laporan->sebab_hantar_semula = $request->input('sebab_hantar_semula');
+        $laporan->save();
+
+        return redirect()->route('homepage.admin')->with('success', 'Laporan telah ditandakan untuk dihantar semula.');
+    }
 }

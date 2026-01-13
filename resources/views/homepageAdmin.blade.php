@@ -171,7 +171,12 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('laporan.reviewAdmin', $laporan->id_laporan) }}" class="btn btn-small">Semak</a>
+                                @if($status === 'disahkan')
+                                    <a href="{{ route('laporan.reviewAdmin', $laporan->id_laporan) }}" class="btn btn-small">Lihat</a>
+                                @else
+                                    <a href="{{ route('laporan.reviewAdmin', $laporan->id_laporan) }}" class="btn btn-small">Semak</a>
+                                @endif
+                                
                                 
                                 <form action="{{ route('laporan.destroy', $laporan->id_laporan) }}" method="POST" style="display:inline-block;margin-left:8px;">
                                     @csrf

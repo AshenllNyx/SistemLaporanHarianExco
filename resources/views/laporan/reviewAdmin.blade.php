@@ -1,6 +1,40 @@
 @extends('layouts.app')
 
 @section('content')
+
+<style>
+    @media print {
+        /* Hide everything by default */
+        body * {
+            visibility: hidden;
+        }
+        
+        /* Show only the report section and its children */
+        #printableArea, #printableArea * {
+            visibility: visible;
+        }
+
+        /* Position the report at the top of the printed page */
+        #printableArea {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+
+        /* Ensure colors and table borders show up clearly */
+        #printableArea {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        .report-block {
+            page-break-inside: avoid; /* Keeps dorm tables from splitting across pages */
+            margin-bottom: 20px;
+        }
+    }
+</style>
+
 <div class="container">
 
     @php
@@ -50,7 +84,7 @@
 
     @endphp
 
-
+    <div id="printableArea">
     <h2 style="font-size:26px;font-weight:800;margin-bottom:25px">Semakan Laporan Harian EXCO</h2>
 
     {{-- TABLE MAKLUMAT ASAS --}}
@@ -185,18 +219,32 @@
             </table>
         </div>
     @endforeach
+    </div> {{-- End of printableArea --}}
 
-
-    {{-- ACTIONS: Sahkan (left) and Kembali (right) --}}
+    {{-- ACTIONS: Sahkan/Print + Hantar Semula (left) and Kembali (right) --}}
     <div style="margin-top:30px; display:flex; justify-content:space-between; align-items:center;">
-        <div>
-            <form action="{{ route('laporan.pengesahan', $laporan->id_laporan) }}" method="POST" onsubmit="return confirm('Sahkan laporan ini?');">
-                @csrf
-                <button type="submit" class="btn btn-primary" 
+        <div style="display:flex; gap:10px; align-items:center;">
+            @if($laporan->status_laporan === 'disahkan')
+                {{-- Print Button for Approved Reports --}}
+                <button class="btn btn-success" onclick="window.print()" 
                     style="padding:10px 20px;font-weight:600;font-size:16px;">
-                    Sahkan Laporan Ini
+                    🖨️ Cetak Laporan
                 </button>
-            </form>
+            @else
+                {{-- Sahkan Button for Pending Reports --}}
+                <form action="{{ route('laporan.pengesahan', $laporan->id_laporan) }}" method="POST" onsubmit="return confirm('Sahkan laporan ini?');" style="display:inline-block; margin:0;">
+                    @csrf
+                    <button type="submit" class="btn btn-primary" 
+                        style="padding:10px 20px;font-weight:600;font-size:16px;">
+                        Sahkan Laporan Ini
+                    </button>
+                </form>
+
+                {{-- Resubmit button placed next to approve --}}
+                <button type="button" class="btn btn-warning btn-resubmit" style="padding:10px 20px;font-weight:600;font-size:16px;margin-left:6px;">
+                    Hantar Semula Laporan Ini
+                </button>
+            @endif
         </div>
 
         <div>
@@ -207,4 +255,54 @@
     </div>
 
 </div>
+<!-- Resubmit Modal -->
+<div id="resubmitModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:9999;">
+    <div style="background:white; padding:20px; max-width:600px; width:90%; border-radius:8px; box-shadow:0 6px 24px rgba(0,0,0,0.2);">
+        <h3 style="margin-top:0;">Hantar Semula Laporan</h3>
+        <p style="color:#374151;">Sila masukkan sebab untuk menghantar semula laporan ini. Sebab akan dihantar kepada pelapor.</p>
+
+        <form id="resubmitForm" action="{{ route('laporan.hantarSemula', $laporan->id_laporan) }}" method="POST">
+            @csrf
+            <div style="margin-bottom:12px;">
+                <label for="sebab_hantar_semula" style="display:block;font-weight:600;margin-bottom:6px;">Sebab Hantar Semula (pilihan)</label>
+                <textarea name="sebab_hantar_semula" id="sebab_hantar_semula" rows="4" placeholder="Terangkan kenapa laporan perlu dihantar semula..." style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:6px; font-size:14px; resize:vertical;"></textarea>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button type="button" id="resubmitCancel" class="btn btn-secondary" style="padding:8px 14px;">Batal</button>
+                <button type="submit" class="btn btn-warning" style="padding:8px 14px;">Hantar Semula</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Modal logic for resubmit
+    (function(){
+        const openBtn = document.querySelector('.btn-resubmit');
+        const modal = document.getElementById('resubmitModal');
+        const cancel = document.getElementById('resubmitCancel');
+
+        if (!openBtn) return;
+
+        openBtn.addEventListener('click', function(){
+            modal.style.display = 'flex';
+            document.getElementById('sebab_hantar_semula').focus();
+        });
+
+        cancel.addEventListener('click', function(){
+            modal.style.display = 'none';
+        });
+
+        // Close modal on escape
+        document.addEventListener('keydown', function(e){
+            if (e.key === 'Escape') modal.style.display = 'none';
+        });
+
+        // Simple validation: confirm before submit if textarea empty? allow empty
+        document.getElementById('resubmitForm').addEventListener('submit', function(){
+            return confirm('Tandakan laporan ini untuk dihantar semula?');
+        });
+    })();
+</script>
 @endsection

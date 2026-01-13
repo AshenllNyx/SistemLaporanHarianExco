@@ -136,6 +136,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/laporan/{laporan}/pengesahan', [LaporanController::class, 'pengesahan'])
         ->name('laporan.pengesahan');
 
+    // ➤ HANTAR SEMULA — Admin mark laporan for resubmission
+    Route::post('/laporan/{laporan}/hantar-semula', [LaporanController::class, 'hantarSemula'])
+        ->name('laporan.hantarSemula');   
+
     // ========================================
     // PELAJAR SAKIT
     // ========================================
