@@ -3,21 +3,116 @@
 @section('title','Pilih Laporan Seterusnya')
 
 @section('content')
-<h2 style="font-size:22px;font-weight:700">Adakah terdapat kesalahan disiplin?</h2>
+@include('components.report-steps', ['currentStep' => 2])
+<style>
+    .question-wrap {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+        min-height: 60vh;
+    }
 
-<div style="background:white;padding:20px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.06)">
-    <p>Sila pilih sama ada anda ingin mencatat laporan disiplin untuk laporan ini.</p>
+    .question-card {
+        background: white;
+        padding: 48px 32px;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        max-width: 480px;
+        width: 100%;
+        border: 1px solid #f1f5f9;
+        transition: transform 0.3s ease;
+    }
 
-    <div style="display:flex;gap:12px;margin-top:12px">
-        {{-- Button YA --}}
-        <form method="GET" action="{{ route('laporan.disiplin.create', $laporan->id_laporan) }}" style="display:inline">
-            <button type="submit" style="padding:10px 14px;border-radius:8px;background:#2563eb;color:white;border:none;cursor:pointer">Ya</button>
-        </form>
+    .question-card:hover {
+        transform: translateY(-5px);
+    }
 
-        {{-- Button TIDAK --}}
-        <form method="GET" action="{{ route('laporan.kerosakan.soalan', $laporan->id_laporan) }}" style="display:inline">
-            <button type="submit" style="padding:10px 14px;border-radius:8px;background:#e5e7eb;color:#111;border:none;cursor:pointer">Tidak</button>
-        </form>
+    .icon-box {
+        width: 84px;
+        height: 84px;
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        border-radius: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 28px;
+        font-size: 36px;
+        box-shadow: 0 8px 16px rgba(59, 130, 246, 0.1);
+    }
+
+    .q-title {
+        font-size: 24px;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 12px;
+        letter-spacing: -0.02em;
+    }
+
+    .q-text {
+        color: #64748b;
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 36px;
+    }
+
+    .btn-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .btn-q {
+        padding: 16px 24px;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        width: 100%;
+    }
+
+    .btn-ya {
+        background: #2563eb;
+        color: white;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-ya:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-tidak {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+    }
+
+    .btn-tidak:hover {
+        background: #e2e8f0;
+        color: #1e293b;
+    }
+</style>
+
+<div class="question-wrap">
+    <div class="question-card">
+        <div class="icon-box">⚡</div>
+        <h2 class="q-title">Laporan Disiplin</h2>
+        <p class="q-text">Adakah terdapat sebarang kesalahan disiplin atau isu sahsiah yang perlu dilaporkan?</p>
+
+        <div class="btn-grid">
+            <form method="GET" action="{{ route('laporan.disiplin.create', $laporan->id_laporan) }}">
+                <button type="submit" class="btn-q btn-ya">Ya, Ada</button>
+            </form>
+
+            <form method="GET" action="{{ route('laporan.kerosakan.soalan', $laporan->id_laporan) }}">
+                <button type="submit" class="btn-q btn-tidak">Tidak</button>
+            </form>
+        </div>
     </div>
 </div>
 @endsection

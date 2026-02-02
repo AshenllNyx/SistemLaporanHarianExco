@@ -27,13 +27,6 @@
                    style="width:200px;padding:10px;border:1px solid #d1d5db;border-radius:8px">
         </div>
 
-        <div style="margin-bottom:14px">
-            <label style="font-weight:600;display:block;margin-bottom:6px">Senarai Pelajar (1 baris = 1 nama)</label>
-            <textarea name="senarai_pelajar" rows="6"
-                      style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;resize:vertical"
-                      placeholder="Contoh:
-Ali Bin Abu
-Siti Binti Amin"></textarea>
             <p style="font-size:13px;color:#6b7280;margin-top:6px">Dibiarkan kosong jika tiada.</p>
         </div>
 

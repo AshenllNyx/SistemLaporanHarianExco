@@ -13,7 +13,6 @@ class Dorm extends Model
     protected $fillable = [
         'nama_dorm',
         'blok',
-        'senarai_pelajar',
         'capacity',
     ];
 
@@ -22,22 +21,8 @@ class Dorm extends Model
         'capacity' => 'integer',
     ];
 
-    public function getSenaraiPelajarAttribute($value)
+    public function pelajars()
     {
-        // if already array (cast may handle), return it
-        if (is_array($value)) {
-            return $value;
-        }
-
-        // try decoding once
-        $decoded = json_decode($value, true);
-
-        // if decoding gives a string, decode again (double encoded)
-        if (is_string($decoded)) {
-            $decoded2 = json_decode($decoded, true);
-            return is_array($decoded2) ? $decoded2 : [];
-        }
-
-        return is_array($decoded) ? $decoded : [];
+        return $this->hasMany(Pelajar::class, 'dorm_id', 'id_dorm');
     }
 }

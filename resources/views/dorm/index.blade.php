@@ -23,6 +23,7 @@
                     <th style="padding:10px;border-bottom:1px solid #eef2ff">Blok</th>
                     <th style="padding:10px;border-bottom:1px solid #eef2ff">Kapasiti</th>
                     <th style="padding:10px;border-bottom:1px solid #eef2ff">Bil. Pelajar</th>
+                    <th style="padding:10px;border-bottom:1px solid #eef2ff;text-align:right">Tindakan</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,11 +32,26 @@
                         <td style="padding:10px;border-bottom:1px solid #f3f4f6">{{ $dorm->nama_dorm }}</td>
                         <td style="padding:10px;border-bottom:1px solid #f3f4f6">{{ $dorm->blok }}</td>
                         <td style="padding:10px;border-bottom:1px solid #f3f4f6">{{ $dorm->capacity ?? '-' }}</td>
-                        <td style="padding:10px;border-bottom:1px solid #f3f4f6">{{ is_array($dorm->senarai_pelajar) ? count($dorm->senarai_pelajar) : 0 }}</td>
+                        <td style="padding:10px;border-bottom:1px solid #f3f4f6">{{ $dorm->pelajars_count ?? $dorm->pelajars->count() ?? 0 }}</td>
+                        <td style="padding:10px;border-bottom:1px solid #f3f4f6;text-align:right">
+                            <a href="{{ route('dorms.show', $dorm->id_dorm) }}" 
+                               style="display:inline-block;padding:6px 10px;border-radius:6px;background:#3b82f6;color:white;text-decoration:none;font-size:13px;font-weight:600;margin-right:6px">
+                                Lihat
+                            </a>
+                            <a href="{{ route('dorms.edit', $dorm->id_dorm) }}" 
+                               style="display:inline-block;padding:6px 10px;border-radius:6px;background:#f59e0b;color:white;text-decoration:none;font-size:13px;font-weight:600;margin-right:6px">
+                                Edit
+                            </a>
+                           <form action="{{ route('dorms.destroy', $dorm->id_dorm) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit">Padam</button>
+                            </form>
+                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" style="padding:12px;text-align:center;color:#6b7280">Tiada dorm direkodkan.</td>
+                        <td colspan="5" style="padding:12px;text-align:center;color:#6b7280">Tiada dorm direkodkan.</td>
                     </tr>
                 @endforelse
             </tbody>

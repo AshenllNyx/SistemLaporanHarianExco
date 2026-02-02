@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Sistem Laporan Harian EXCO')</title>
+    <title>@yield('title', 'Sistem Laporan Harian Exco Aspura KVDSAZI')</title>
 
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
@@ -16,7 +16,30 @@
 
     <nav>
         @if ( Auth::user()->level == 'admin' )
-            <a href="{{ route('homepage.admin') }}" class="{{ Route::is('homepage.admin') ? 'active' : '' }}">🏠 Laman Utama Admin</a>
+            
+            {{-- Dropdown Parent --}}
+            @php
+                $isActiveDashboard = Route::is('homepage.admin') || Route::is('semakan.Laporan') || Route::is('kehadiran.index');
+            @endphp
+
+            <div class="nav-group {{ $isActiveDashboard ? 'active' : '' }}">
+                <a href="#" class="nav-link dropdown-toggle" onclick="toggleNav(event, 'dashboard-menu')">
+                    <span>📊 Dashboard</span>
+                    <span class="arrow">▼</span>
+                </a>
+                <div class="nav-children" id="dashboard-menu" style="{{ $isActiveDashboard ? 'display:block' : 'display:none' }}">
+                    <a href="{{ route('homepage.admin') }}" class="{{ Route::is('homepage.admin') ? 'active' : '' }}">
+                        🏠 Statistik
+                    </a>
+                    <a href="{{ route('kehadiran.index') }}" class="{{ Route::is('kehadiran.index') ? 'active' : '' }}">
+                        📋 Bilangan Kehadiran
+                    </a>
+                    <a href="{{ route('semakan.Laporan') }}" class="{{ Route::is('semakan.Laporan') ? 'active' : '' }}">
+                        📄 Semakan Laporan
+                    </a>
+                </div>
+            </div>
+
         @else
         <a href="{{ route('homepage') }}" class="{{ Route::is('homepage') ? 'active' : '' }}">📄 Senarai Laporan</a>
         @endif
@@ -24,14 +47,12 @@
          {{-- Navigation based on user level --}}
 
         @if ( Auth::user()->level == 'admin' )
-            <a href="{{ route('users.index') }}" class="{{ Route::is('users.*') ? 'active' : '' }}">📄 Senarai User</a>
+            <a href="{{ route('users.index') }}" class="{{ Route::is('users.*') ? 'active' : '' }}">� Senarai Pengguna</a>
             <a href="{{ route('dorms.index') }}" class="{{ Route::is('dorms.*') ? 'active' : '' }}">🏠 Senarai Dorm</a>
         @else
-            <a href="{{ route('laporan.create') }}" class="{{ Route::is('laporan.create') ? 'active' : '' }}">📝 Borang Laporan Harian</a> 
+            <a href="{{ route('laporan.create') }}" class="{{ Route::is('laporan.create') ? 'active' : '' }}">📝 Borang Laporan Harian</a>
+            <a href="{{ route('dorms.userlist') }}" class="{{ Route::is('dorms.*') ? 'active' : '' }}">🏢 Senarai Dorm</a>
         @endif
-
-        {{-- Tambah Dorm (boleh dicapai semua user, ikut keperluan) --}}
-        <a href="{{ route('dorms.create') }}" class="{{ Route::is('dorms.create') ? 'active' : '' }}">➕ Tambah Dorm</a>
 
 
     </nav>
@@ -52,13 +73,75 @@
 
 <div class="main">
     <header>
-        <h2>SISTEM LAPORAN HARIAN EXCO</h2>
+        <h2>Sistem Laporan Harian Exco Aspura KVDSAZI</h2>
     </header>
 
     <section class="container">
         @yield('content')
     </section>
 </div>
+
+{{-- Inline Script & Styles for Dropdown --}}
+<style>
+    /* Dropdown Styles */
+    .nav-group {
+        margin-bottom: 4px;
+    }
+    .nav-link.dropdown-toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+    }
+    .nav-children {
+        padding-left: 10px; /* Indent children */
+        background: rgba(0,0,0,0.03);
+        border-radius: 8px;
+        margin-top: 4px;
+        overflow: hidden;
+    }
+    .nav-children a {
+        font-size: 0.9em;
+        padding: 8px 12px;
+        border-radius: 6px;
+        display: block;
+        color: #4b5563;
+        text-decoration: none;
+        margin-bottom: 2px;
+    }
+    .nav-children a:hover {
+        background: #e5e7eb;
+        color: #1f2937;
+    }
+    .nav-children a.active {
+        background: #dbeafe;
+        color: #1e40af;
+        font-weight: 600;
+    }
+    .arrow {
+        font-size: 10px;
+        transition: transform 0.2s;
+    }
+    .nav-group.active .dropdown-toggle .arrow {
+        transform: rotate(180deg);
+    }
+</style>
+
+<script>
+    function toggleNav(e, id) {
+        e.preventDefault();
+        const menu = document.getElementById(id);
+        const parent = menu.parentElement; // .nav-group
+        
+        if (menu.style.display === 'none' || menu.style.display === '') {
+            menu.style.display = 'block';
+            parent.classList.add('active');
+        } else {
+            menu.style.display = 'none';
+            parent.classList.remove('active');
+        }
+    }
+</script>
 
 </body>
 </html>

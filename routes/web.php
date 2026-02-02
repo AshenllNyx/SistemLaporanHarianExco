@@ -21,7 +21,7 @@ Route::get('/register', [LoginController::class, 'showRegisterForm'])->name('reg
 Route::post('/register', [LoginController::class, 'register'])->name('register.attempt');
 
 // Logout
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::match(['get', 'post'], '/logout', [LoginController::class, 'logout'])->name('logout');
 
 
 /*
@@ -35,24 +35,44 @@ Route::middleware('auth')->group(function () {
     Route::get('/homepage', [LaporanController::class, 'homepage'])->name('homepage');
     
     // Admin Homepage - Report Tracking
-    Route::get('/homepage-admin', [LaporanController::class, 'homepageAdmin'])->name('homepage.admin');
+    Route::get('/homepage-admin', [LaporanController::class, 'homepageAdmin'])->middleware('is_admin')->name('homepage.admin');
+
+    // Semakan Laporan
+    Route::get('/semakan-laporan', [LaporanController::class, 'semakanLaporan'])->middleware('is_admin')->name('semakan.Laporan');
+    
+    // Kehadiran Pelajar
+    Route::get('/kehadiran-pelajar', [LaporanController::class, 'kehadiranIndex'])->middleware('is_admin')->name('kehadiran.index');
 
     // Profile Management
     Route::get('/profile/edit', [UserController::class, 'editProfile'])->name('profile.edit');
-    Route::get('/profile/edit-admin', [UserController::class, 'editProfileAdmin'])->name('profile.editAdmin');
+    Route::get('/profile/edit-admin', [UserController::class, 'editProfileAdmin'])->middleware('is_admin')->name('profile.editAdmin');
     Route::put('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
 
-    // Dorms
-    Route::get('/dorms', [DormController::class, 'index'])->name('dorms.index');
-    Route::get('/dorms/create', [DormController::class, 'create'])->name('dorms.create');
-    Route::post('/dorms', [DormController::class, 'store'])->name('dorms.store');
+    // Dorms — Urus (admin only)
+    Route::middleware('is_admin')->group(function () {
+        Route::get('/dorms', [DormController::class, 'index'])->name('dorms.index');
+        Route::get('/dorms/create', [DormController::class, 'create'])->name('dorms.create');
+        Route::post('/dorms', [DormController::class, 'store'])->name('dorms.store');
+        Route::get('/dorms/{id}/edit', [DormController::class, 'edit'])->name('dorms.edit');
+        Route::post('/dorms/{id}/pelajar', [DormController::class, 'tambahPelajar'])->name('dorms.tambahPelajar');
+        Route::put('/dorms/{id}', [DormController::class, 'update'])->name('dorms.update');
+        Route::delete('/dorms/{id}', [DormController::class, 'destroy'])->name('dorms.destroy');
+        Route::put('/dorms/{dorm}/pelajar/{pelajar}',[DormController::class, 'updatePelajar'])->name('dorms.updatePelajar');
+        Route::delete('/dorms/{dorm}/pelajar/{pelajar}',[DormController::class, 'destroyPelajar'])->name('dorms.destroyPelajar');
+    });
+
+    // Dorms — Senarai & lihat (semua user login)
+    Route::get('/dorms/list-user', [DormController::class, 'userList'])->name('dorms.userlist');
+    Route::get('/dorms/{id}', [DormController::class, 'show'])->name('dorms.show');
 
     // Senarai User (admin only)
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    Route::post('/users/{no_ic}/approve', [UserController::class, 'approve'])->name('users.approve');
-    Route::get('/users/{no_ic}/edit', [UserController::class, 'edit'])->name('users.edit');
-    Route::put('/users/{no_ic}', [UserController::class, 'update'])->name('users.update');
-    Route::delete('/users/{no_ic}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::middleware('is_admin')->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::post('/users/{no_ic}/approve', [UserController::class, 'approve'])->name('users.approve');
+        Route::get('/users/{no_ic}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{no_ic}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{no_ic}', [UserController::class, 'destroy'])->name('users.destroy');
+    });
 
     //search laporan
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
@@ -120,7 +140,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/review/{id}', [LaporanController::class, 'review'])
         ->name('laporan.review');
 
-    // ➤ DELETE — Hapus laporan (admin)
+    // ➤ EDIT — Edit laporan yang dalam draf atau hantar semula
+    Route::get('/laporan/edit/{id}', [LaporanController::class, 'editDorm'])
+        ->name('laporan.edit');
+
+    // ➤ UPDATE — Simpan perubahan laporan dorm
+    Route::put('/laporan/{id}/update-dorm', [LaporanController::class, 'updateDorm'])
+        ->name('laporan.updateDorm');
+
+    // ➤ DELETE — Hapus laporan (admin & user)
     Route::delete('/laporan/{laporan}', [LaporanController::class, 'destroy'])
         ->name('laporan.destroy');
 
@@ -130,14 +158,17 @@ Route::middleware('auth')->group(function () {
 
     // review admin
     Route::get('/laporan/review-admin/{id}', [LaporanController::class, 'reviewAdmin'])
+        ->middleware('is_admin')
         ->name('laporan.reviewAdmin');
 
     // ➤ PENGESAHAN — Admin confirm laporan
     Route::post('/laporan/{laporan}/pengesahan', [LaporanController::class, 'pengesahan'])
+        ->middleware('is_admin')
         ->name('laporan.pengesahan');
 
     // ➤ HANTAR SEMULA — Admin mark laporan for resubmission
     Route::post('/laporan/{laporan}/hantar-semula', [LaporanController::class, 'hantarSemula'])
+        ->middleware('is_admin')
         ->name('laporan.hantarSemula');   
 
     // ========================================

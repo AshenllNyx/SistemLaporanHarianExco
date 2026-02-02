@@ -23,6 +23,11 @@ class LaporanHarian extends Model
         'status_laporan',
     ];
 
+    protected $casts = [
+        'tarikh_laporan' => 'date',
+        'tarikh_hantar' => 'datetime',
+    ];
+
     public function butiranLaporans()
     {
         return $this->hasMany(ButiranLaporan::class, 'id_laporan', 'id_laporan');
