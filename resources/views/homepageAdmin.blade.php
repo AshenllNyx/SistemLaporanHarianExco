@@ -185,7 +185,7 @@
 
 </style>
 
-<div class="admin-wrap">
+<div class="admin-wrap" style="width: 100%; max-width: 1200px; margin: 20px auto; padding: 0 15px;">
 
     {{-- Header --}}
     <div class="admin-header">

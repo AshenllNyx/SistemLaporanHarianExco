@@ -46,9 +46,14 @@
     .btn-danger:hover { background: #fecaca; }
 
     /* Filter Form */
-    .filter-bar { display: flex; gap: 10px; margin-bottom: 20px; align-items: end; background: #fff; padding: 16px; border-radius: 12px; border: 1px solid #f3f4f6; }
+    .filter-bar { display: flex; gap: 10px; margin-bottom: 20px; align-items: end; background: #fff; padding: 16px; border-radius: 12px; border: 1px solid #f3f4f6; flex-wrap: wrap; }
     .form-group label { display: block; font-size: 12px; font-weight: 600; color: #4b5563; margin-bottom: 4px; }
-    .form-control { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; }
+    .form-control { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; width: 100%; }
+    
+    @media (max-width: 640px) {
+        .filter-bar { flex-direction: column; align-items: stretch; }
+        .filter-bar button, .filter-bar a { width: 100%; justify-content: center; }
+    }
 </style>
 
 <div class="admin-wrap">

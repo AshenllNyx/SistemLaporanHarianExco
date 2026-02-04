@@ -8,8 +8,21 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body>
+<div class="mobile-header">
+    <div class="brand-mobile">
+        <img src="{{ asset('images/logo.jpeg') }}" alt="Logo" class="logo-sm">
+        <span>E-lhea</span>
+    </div>
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+</div>
 
-<div class="sidebar">
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+
+<div class="sidebar" id="sidebar">
     <div class="brand-side">
 		<img class="logo" src="{{ asset("images/logo.jpeg") }}" alt="">
     </div>
@@ -128,6 +141,35 @@
 </style>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Restore state for dashboard menu - DEFAULT IS OPEN
+        const dashboardMenu = document.getElementById('dashboard-menu');
+        if (dashboardMenu) {
+            const savedState = localStorage.getItem('nav_dashboard-menu');
+            const parent = dashboardMenu.parentElement;
+
+            // Only close if user explicitly closed it before
+            if (savedState === 'closed') {
+                dashboardMenu.style.display = 'none';
+                parent.classList.remove('active');
+            } else {
+                // Default: Always open
+                dashboardMenu.style.display = 'block';
+                parent.classList.add('active');
+            }
+        }
+    });
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('sidebarBackdrop');
+        const toggle = document.querySelector('.menu-toggle');
+        sidebar.classList.toggle('active');
+        backdrop.classList.toggle('active');
+        toggle.classList.toggle('active');
+        document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+    }
+
     function toggleNav(e, id) {
         e.preventDefault();
         const menu = document.getElementById(id);
@@ -136,9 +178,11 @@
         if (menu.style.display === 'none' || menu.style.display === '') {
             menu.style.display = 'block';
             parent.classList.add('active');
+            localStorage.setItem('nav_' + id, 'open');
         } else {
             menu.style.display = 'none';
             parent.classList.remove('active');
+            localStorage.setItem('nav_' + id, 'closed');
         }
     }
 </script>

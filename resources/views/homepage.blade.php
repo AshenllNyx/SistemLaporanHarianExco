@@ -315,13 +315,13 @@
     <div class="dashboard-content">
         
         {{-- Header --}}
-        <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-            <div>
+        <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
+            <div style="flex: 1; min-width: 280px;">
                 <h1 class="dashboard-title">📋 Laporan Harian Exco Aspura KVDSAZI</h1>
                 <p class="dashboard-subtitle">Kelola dan pantau laporan harian anda dengan mudah</p>
             </div>
             
-            <div class="attendance-box" style="background: white; padding: 16px 24px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid #10b981; display: flex; flex-direction: column; align-items: flex-end;">
+            <div class="attendance-box" style="background: white; padding: 16px 24px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid #10b981; display: flex; flex-direction: column; align-items: flex-start; min-width: 200px;">
                 <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">KEHADIRAN HARI INI</div>
                 <div style="font-size: 12px; font-weight: 600; color: #94a3b8; margin-bottom: 6px;">{{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</div>
                 <div style="font-size: 28px; font-weight: 800; color: #0f172a; line-height: 1;">
@@ -494,91 +494,93 @@
                 @endforeach
             </div>
 
-            {{-- Table View (Optional: Better for viewing all details) --}}
+            {{-- Table View --}}
             <div style="margin-top: 40px;">
                 <h3 style="font-size: 14px; font-weight: 700; color: #6b7280; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">📇 Tampilan Jadual</h3>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Tarikh</th>
-                                <th>Status</th>
-                                <th>Butiran</th>
-                                <th style="text-align: center;">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($laporans as $lap)
-                            <tr>
-                                <td>
-                                    <strong>{{ \Carbon\Carbon::parse($lap->tarikh_laporan)->format('d/m/Y') }}</strong>
-                                    @if($lap->tarikh_hantar)
-                                        <div class="muted" style="font-size: 11px;">🕒 {{ \Carbon\Carbon::parse($lap->tarikh_hantar)->format('h:i A') }}</div>
-                                    @endif
-                                </td>
-                                <td>
-                                    @php $s = $lap->status_laporan; @endphp
-                                    @if($s == 'dihantar')
-                                        <span class="report-status status-dihantar">✓ Dihantar</span>
-                                    @elseif($s == 'disahkan')
-                                        <span class="report-status status-disahkan">✓ Disahkan</span>
-                                    @elseif(in_array($s,['hantar_semula','perlu_hantar_semula','tolak']))
-                                        <span class="report-status status-hantar-semula">⚠️ Hantar Semula</span>
-                                    @elseif($s == 'draf')
-                                        <span class="report-status status-draf">○ Draf</span>
-                                    @else
-                                        <span class="report-status">{{ $s }}</span>
-                                    @endif
-                                </td>
-                                <td style="max-width: 400px; word-break: break-word;">
-                                    @if($lap->butiranLaporans && $lap->butiranLaporans->count())
-                                        @php $count = 0; @endphp
-                                        @foreach($lap->butiranLaporans as $b)
-                                            @if($count < 2)
-                                                <div style="font-size: 13px; margin-bottom: 4px;">
-                                                    @php
-                                                        $data = $b->data_tambahan ?? [];
-                                                        $dormName = $b->dorm->nama_dorm ?? ($b->id_dorm ? 'Dorm #'.$b->id_dorm : '-');
-                                                    @endphp
-                                                    @if($b->jenis_butiran === 'dorm')
-                                                        <strong>{{ $dormName }}:</strong> {{ $data['kategori_kebersihan'] ?? 'N/A' }}
-                                                    @elseif($b->jenis_butiran === 'disiplin')
-                                                        <strong>Disiplin:</strong> {{ $data['jenis_kesalahan'] ?? $b->deskripsi_isu ?? '-' }}
-                                                    @elseif($b->jenis_butiran === 'kerosakan')
-                                                        <strong>Kerosakan:</strong> {{ $data['jenis_kerosakan'] ?? $b->deskripsi_isu ?? '-' }}
-                                                    @else
-                                                        <strong>{{ ucfirst($b->jenis_butiran) }}:</strong> {{ $b->deskripsi_isu ?? 'N/A' }}
-                                                    @endif
-                                                </div>
-                                                @php $count++; @endphp
+                <div class="table-responsive">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tarikh</th>
+                                    <th>Status</th>
+                                    <th>Butiran</th>
+                                    <th style="text-align: center;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($laporans as $lap)
+                                <tr>
+                                    <td>
+                                        <strong>{{ \Carbon\Carbon::parse($lap->tarikh_laporan)->format('d/m/Y') }}</strong>
+                                        @if($lap->tarikh_hantar)
+                                            <div class="muted" style="font-size: 11px;">🕒 {{ \Carbon\Carbon::parse($lap->tarikh_hantar)->format('h:i A') }}</div>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @php $s = $lap->status_laporan; @endphp
+                                        @if($s == 'dihantar')
+                                            <span class="report-status status-dihantar">✓ Dihantar</span>
+                                        @elseif($s == 'disahkan')
+                                            <span class="report-status status-disahkan">✓ Disahkan</span>
+                                        @elseif(in_array($s,['hantar_semula','perlu_hantar_semula','tolak']))
+                                            <span class="report-status status-hantar-semula">⚠️ Hantar Semula</span>
+                                        @elseif($s == 'draf')
+                                            <span class="report-status status-draf">○ Draf</span>
+                                        @else
+                                            <span class="report-status">{{ $s }}</span>
+                                        @endif
+                                    </td>
+                                    <td style="max-width: 400px; word-break: break-word;">
+                                        @if($lap->butiranLaporans && $lap->butiranLaporans->count())
+                                            @php $count = 0; @endphp
+                                            @foreach($lap->butiranLaporans as $b)
+                                                @if($count < 2)
+                                                    <div style="font-size: 13px; margin-bottom: 4px;">
+                                                        @php
+                                                            $data = $b->data_tambahan ?? [];
+                                                            $dormName = $b->dorm->nama_dorm ?? ($b->id_dorm ? 'Dorm #'.$b->id_dorm : '-');
+                                                        @endphp
+                                                        @if($b->jenis_butiran === 'dorm')
+                                                            <strong>{{ $dormName }}:</strong> {{ $data['kategori_kebersihan'] ?? 'N/A' }}
+                                                        @elseif($b->jenis_butiran === 'disiplin')
+                                                            <strong>Disiplin:</strong> {{ $data['jenis_kesalahan'] ?? $b->deskripsi_isu ?? '-' }}
+                                                        @elseif($b->jenis_butiran === 'kerosakan')
+                                                            <strong>Kerosakan:</strong> {{ $data['jenis_kerosakan'] ?? $b->deskripsi_isu ?? '-' }}
+                                                        @else
+                                                            <strong>{{ ucfirst($b->jenis_butiran) }}:</strong> {{ $b->deskripsi_isu ?? 'N/A' }}
+                                                        @endif
+                                                    </div>
+                                                    @php $count++; @endphp
+                                                @endif
+                                            @endforeach
+                                            @if($lap->butiranLaporans->count() > 2)
+                                                <div class="muted">+{{ $lap->butiranLaporans->count() - 2 }} lagi</div>
                                             @endif
-                                        @endforeach
-                                        @if($lap->butiranLaporans->count() > 2)
-                                            <div class="muted">+{{ $lap->butiranLaporans->count() - 2 }} lagi</div>
+                                        @else
+                                            <span class="muted">-</span>
                                         @endif
-                                    @else
-                                        <span class="muted">-</span>
-                                    @endif
-                                </td>
-                                <td style="text-align: center;">
-                                    <div class="table-actions">
-                                        <a href="{{ route('laporan.review', $lap->id_laporan) }}" class="btn">Lihat</a>
-                                        @if($lap->status_laporan === 'draf' || $lap->status_laporan === 'dihantar' || in_array($lap->status_laporan, ['hantar_semula', 'tolak', 'perlu_hantar_semula']))
-                                            <a href="{{ route('laporan.edit', $lap->id_laporan) }}" class="btn btn-secondary">Kemaskini</a>
-                                        @endif
-                                        @if($lap->status_laporan === 'draf' || in_array($lap->status_laporan, ['hantar_semula', 'tolak', 'perlu_hantar_semula']))
-                                            <form action="{{ route('laporan.destroy', $lap->id_laporan) }}" method="POST" onsubmit="return confirm('Padam laporan ini?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger">Padam</button>
-                                            </form>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <div class="table-actions">
+                                            <a href="{{ route('laporan.review', $lap->id_laporan) }}" class="btn">Lihat</a>
+                                            @if($lap->status_laporan === 'draf' || $lap->status_laporan === 'dihantar' || in_array($lap->status_laporan, ['hantar_semula', 'tolak', 'perlu_hantar_semula']))
+                                                <a href="{{ route('laporan.edit', $lap->id_laporan) }}" class="btn btn-secondary">Kemaskini</a>
+                                            @endif
+                                            @if($lap->status_laporan === 'draf' || in_array($lap->status_laporan, ['hantar_semula', 'tolak', 'perlu_hantar_semula']))
+                                                <form action="{{ route('laporan.destroy', $lap->id_laporan) }}" method="POST" onsubmit="return confirm('Padam laporan ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger">Padam</button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         @endif

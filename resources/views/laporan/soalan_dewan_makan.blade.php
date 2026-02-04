@@ -63,6 +63,15 @@
         gap: 16px;
     }
 
+    @media (max-width: 480px) {
+        .btn-grid {
+            grid-template-columns: 1fr;
+        }
+        .question-card {
+            padding: 32px 20px;
+        }
+    }
+
     .btn-q {
         padding: 16px 24px;
         border-radius: 14px;

@@ -66,7 +66,7 @@
                 <div style="height: 1px; flex-grow: 1; background: var(--border);"></div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px; margin-bottom: 32px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 32px;">
                 @foreach($dormList as $dorm)
                     <div class="card" style="margin-bottom: 0;">
                         <h4 style="margin-bottom: 16px; font-size: 18px; font-weight: 700; color: var(--accent);">
@@ -103,7 +103,7 @@
         @endif
     @endforeach
 
-    <div style="display: flex; justify-content: flex-end; margin-top: 40px; gap: 12px; padding-bottom: 40px;">
+    <div style="display: flex; justify-content: flex-end; margin-top: 40px; gap: 12px; padding-bottom: 40px; flex-wrap: wrap;">
         <a href="{{ route('homepage') }}" class="btn btn-secondary">
             Batal
         </a>

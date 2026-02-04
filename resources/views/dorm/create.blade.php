@@ -18,21 +18,19 @@
         <div style="margin-bottom:14px">
             <label style="font-weight:600;display:block;margin-bottom:6px">Blok</label>
             <input type="text" name="blok" value="{{ old('blok') }}" placeholder="A / B / C / D" required
-                   style="width:200px;padding:10px;border:1px solid #d1d5db;border-radius:8px">
+                   style="width:100%; max-width: 400px; padding:12px;border:1px solid #d1d5db;border-radius:10px;font-size:16px">
         </div>
 
         <div style="margin-bottom:14px">
             <label style="font-weight:600;display:block;margin-bottom:6px">Kapasiti (pilihan)</label>
             <input type="number" name="capacity" value="{{ old('capacity') }}"
-                   style="width:200px;padding:10px;border:1px solid #d1d5db;border-radius:8px">
-        </div>
-
+                   style="width:100%; max-width: 400px; padding:12px;border:1px solid #d1d5db;border-radius:10px;font-size:16px">
             <p style="font-size:13px;color:#6b7280;margin-top:6px">Dibiarkan kosong jika tiada.</p>
         </div>
 
-        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px">
-            <a href="{{ route('dorms.index') }}" class="btn gray" style="padding:10px 14px;border-radius:8px;background:#e5e7eb;color:#111;text-decoration:none">Batal</a>
-            <button type="submit" class="btn" style="padding:10px 14px;border-radius:8px;background:#2563eb;color:white;border:none;cursor:pointer">Simpan</button>
+        <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:24px;flex-wrap:wrap">
+            <a href="{{ route('dorms.index') }}" class="btn-cancel" style="flex:1; min-width:120px; text-align:center; padding:12px;border-radius:10px;background:#f3f4f6;color:#374151;text-decoration:none;font-weight:600">Batal</a>
+            <button type="submit" style="flex:1; min-width:120px; padding:12px;border-radius:10px;background:#2563eb;color:white;border:none;cursor:pointer;font-weight:700;box-shadow: 0 4px 12px rgba(37,99,235,0.2)">Simpan</button>
         </div>
     </form>
 </div>

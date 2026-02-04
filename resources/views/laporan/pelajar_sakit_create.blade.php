@@ -78,14 +78,16 @@
                       placeholder="Masukkan butiran lanjut mengenai keadaan pelajar..."></textarea>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 32px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 32px; flex-wrap: wrap; gap: 20px;">
             <a href="{{ $from === 'hub' ? route('laporan.edit', $laporan->id_laporan) : route('laporan.dewanmakan.soalan', $laporan->id_laporan) }}" 
-               style="color: #64748b; font-weight: 700; text-decoration: none; font-size: 15px;">
+               class="btn-back"
+               style="color: #64748b; font-weight: 700; text-decoration: none; font-size: 15px; min-width: 150px; text-align: center;">
                 {{ $from === 'hub' ? '⬅️ Batal & Kembali' : 'Langkau Bahagian Ini' }}
             </a>
             
             <button type="submit" 
-                    style="background: #ef4444; color: white; padding: 14px 32px; border-radius: 14px; border: none; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(239,68,68,0.2); font-size: 15px;">
+                    class="btn btn-submit"
+                    style="background: #ef4444; color: white; padding: 14px 32px; border-radius: 14px; border: none; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(239,68,68,0.2); font-size: 15px; flex: 1; min-width: 250px;">
                 {{ $from === 'hub' ? 'Simpan & Kembali ke Hub' : 'Simpan dan Teruskan ➔' }}
             </button>
         </div>

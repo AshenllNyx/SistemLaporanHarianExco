@@ -24,7 +24,6 @@
 		input[type="text"],input[type="email"],input[type="password"]{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #e6e9ef;background:#fbfdff;font-size:14px}
 		input:focus{outline:none;box-shadow:0 6px 18px rgba(37,99,235,0.12);border-color:var(--accent)}
 		.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-		.remember{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px}
 		.btn{background:linear-gradient(90deg,var(--accent),#4f46e5);color:white;padding:10px 16px;border-radius:10px;border:none;font-weight:600;cursor:pointer}
 		.btn:active{transform:translateY(1px)}
 		.error{background:#fff1f2;color:#7f1d1d;padding:10px;border-radius:8px;margin-bottom:12px;border:1px solid rgba(185,28,28,0.08)}

@@ -28,23 +28,46 @@ class LoginController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        $remember = $request->filled('remember');
-
-        if (Auth::attempt($credentials, $remember)) {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             
-            // Redirect based on user level
             $user = Auth::user();
+            $loginType = $request->input('login_type');
+
+            // Handle Warden/Admin Button
+            if ($loginType === 'admin') {
+                if ($user->level === 'admin') {
+                    return redirect()->intended('/homepage-admin');
+                } else {
+                    Auth::logout();
+                    return back()->withErrors([
+                        'user_name' => 'Akaun anda bukan akaun Warden.',
+                    ])->withInput($request->only('user_name'));
+                }
+            }
+            
+            // Handle Exco/User Button
+            if ($loginType === 'user') {
+                if ($user->level === 'user') {
+                    return redirect()->intended('/homepage');
+                } else {
+                    Auth::logout();
+                    return back()->withErrors([
+                        'user_name' => 'Akaun anda bukan akaun Exco.',
+                    ])->withInput($request->only('user_name'));
+                }
+            }
+
+            // Fallback if no login_type provided (e.g. old form or direct hit)
             if ($user->level === 'admin') {
                 return redirect()->intended('/homepage-admin');
             }
-            
             return redirect()->intended('/homepage');
         }
 
         return back()->withErrors([
             'user_name' => 'The provided credentials do not match our records.',
-        ])->withInput($request->only('user_name', 'remember'));
+        ])->withInput($request->only('user_name'));
     }
 
     /**
@@ -94,6 +117,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         
-        return redirect()->route('login')->withCookie(cookie()->forget('remember_web_' . sha1(config('app.name'))));
+        return redirect()->route('login');
     }
 }

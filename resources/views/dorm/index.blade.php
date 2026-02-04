@@ -15,7 +15,7 @@
 @endif
 
 <div style="background:white;padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.06)">
-    <div style="overflow-x:auto">
+    <div class="table-responsive">
         <table style="width:100%;border-collapse:collapse">
             <thead>
                 <tr style="text-align:left">
